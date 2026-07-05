@@ -125,11 +125,7 @@ class ClaudeCLIRenderer(Personalizer):
     def render(self, person: Person, criteria: Criteria, campaign: dict[str, Any]) -> Message:
         fields = _fields(person, criteria, campaign)
         instruction = _fill(campaign.get("prompt", ""), fields)
-        prompt = (
-            instruction
-            + "\n\nReturn only the email body — no subject line, no preamble, "
-            "no signature placeholder brackets."
-        )
+        prompt = instruction + _OUTPUT_INSTRUCTIONS
         # The CLI otherwise inherits the caller's session model, which may be
         # unavailable; pin an explicit, valid model (override via env).
         model = env("COLDEMAILS_CLAUDE_CLI_MODEL") or CLAUDE_MODEL
