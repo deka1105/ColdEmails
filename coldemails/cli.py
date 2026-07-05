@@ -149,6 +149,11 @@ def main(argv: list[str] | None = None) -> int:
     p_camp = sub.add_parser("campaigns", help="list available campaigns")
     p_camp.set_defaults(func=_campaigns)
 
+    p_exp = sub.add_parser("export", help="export prospects + drafts as CSV")
+    p_exp.add_argument("--campaign")
+    p_exp.add_argument("--out", help="output file (default: stdout)")
+    p_exp.set_defaults(func=_export)
+
     p_disc = sub.add_parser("discover-firms", help="find VC/angel firm domains")
     p_disc.add_argument("--sector", help="e.g. climate, fintech, ai")
     p_disc.add_argument("--stage", help="e.g. seed, early, growth")

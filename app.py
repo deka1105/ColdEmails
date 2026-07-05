@@ -116,6 +116,9 @@ def main() -> None:
             "fundraising": "Fundraising (find VCs/angels)",
             "b2b": "B2B sales",
             "pr": "PR / media pitch",
+            "podcast": "Podcast guesting pitch",
+            "partnerships": "Partnerships / BD",
+            "recruiting": "Recruiting (candidate outreach)",
         }.get(n, n),
     )
     campaign = get_campaign(campaign_name)
