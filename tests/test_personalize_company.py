@@ -12,7 +12,45 @@ def test_company_resolve():
     assert company.resolve("Stripe") == "stripe.com"
     assert company.resolve("stripe.com") == "stripe.com"
     assert company.resolve("https://Stripe.com/") == "stripe.com"
-    assert company.resolve("Foo Bar Inc") == "foobarinc.com"
+    # Legal suffixes are stripped before slugging.
+    assert company.resolve("Foo Bar Inc") == "foobar.com"
+    assert company.resolve("Acme GmbH") == "acme.com"
+
+
+def test_company_resolve_clearbit(monkeypatch):
+    company._cache.clear()
+    monkeypatch.delenv("COLDEMAILS_NO_NETWORK_RESOLVE", raising=False)
+
+    class FakeResp:
+        def raise_for_status(self):
+            pass
+
+        def json(self):
+            return [
+                {"name": "Notion Labs", "domain": "notionlabs.com"},
+                {"name": "Notion", "domain": "notion.so"},
+            ]
+
+    monkeypatch.setattr(company.requests, "get", lambda *a, **k: FakeResp())
+    # Exact name match wins over the top suggestion.
+    assert company.resolve("Notion") == "notion.so"
+    company._cache.clear()
+    assert company.resolve("Not On The List") == "notionlabs.com"
+    company._cache.clear()
+
+
+def test_company_resolve_clearbit_failure_falls_back(monkeypatch):
+    import requests as req
+
+    company._cache.clear()
+    monkeypatch.delenv("COLDEMAILS_NO_NETWORK_RESOLVE", raising=False)
+
+    def boom(*a, **k):
+        raise req.ConnectionError("offline")
+
+    monkeypatch.setattr(company.requests, "get", boom)
+    assert company.resolve("Some Startup") == "somestartup.com"
+    company._cache.clear()
 
 
 def test_fill_leaves_unknown_placeholders_empty():
