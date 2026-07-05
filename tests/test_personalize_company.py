@@ -122,7 +122,9 @@ def test_claude_cli_renderer(monkeypatch):
 
     def fake_run(cmd, **kw):
         captured["cmd"] = cmd
-        return subprocess.CompletedProcess(cmd, 0, stdout="Hi Jane, quick note.", stderr="")
+        return subprocess.CompletedProcess(
+            cmd, 0, stdout="Subject: A real subject\n\nHi Jane, quick note.", stderr=""
+        )
 
     monkeypatch.setattr(pmod.subprocess, "run", fake_run)
 
@@ -130,7 +132,7 @@ def test_claude_cli_renderer(monkeypatch):
     campaign = {"prompt": "Email {name}", "fallback_subject": "Re: {name}"}
     msg = r.render(Person(name="Jane"), Criteria(), campaign)
     assert msg.body == "Hi Jane, quick note."
-    assert msg.subject == "Re: Jane"
+    assert msg.subject == "A real subject"
     assert "-p" in captured["cmd"] and "--model" in captured["cmd"]
 
 
