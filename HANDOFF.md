@@ -103,12 +103,13 @@ No engine changes needed — that's the core design.
 
 1. **Configure Gmail + do one real send** to the user's own address. This is the
    only integration never run live. Needs their OAuth `credentials.json` + consent.
-2. **Improve `company.resolve`** — currently just slugifies to `.com`; wrong for
-   many companies. Consider a real resolver (Clearbit autocomplete / search).
-3. **More campaigns** (podcast, partnerships, recruiting) — cheap config adds.
-4. **Expand / correct the VC catalog** in `firmfinder.py` (tags are approximate).
-5. **Deploy option** — Dockerfile for hosting the Streamlit app (note: `claude_cli`
-   mode won't work off a machine without Claude Code; fall back to API key there).
+2. **Live-verify the new pieces**: Clearbit resolution and the AI subject-line
+   parsing (offline-tested only; a `coldemails preview` run covers both).
+3. **Follow-up sequences** — track a `sent_at` and support a polite bump email.
+4. **Correct the VC catalog tags** in `firmfinder.py` (still approximate).
+
+Done since v1: company resolver (Clearbit), 3 new campaigns, AI subjects,
+expanded catalog, CSV export, Dockerfile.
 
 ## How to verify quickly
 
