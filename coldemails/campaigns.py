@@ -94,6 +94,66 @@ CAMPAIGNS: dict[str, dict[str, Any]] = {
         ),
         "fallback_subject": "Story idea: {role}",
     },
+    # Use case E — podcast guesting.
+    # Input: podcast/network domain + your topic/expertise (via --role). Target
+    # content/editorial contacts; enrich from the show's site to reference it.
+    "podcast": {
+        "source": "hunter",
+        "requires": ["domain", "role"],
+        "targeting": {"department": "communication,marketing,management", "seniority": "senior,executive"},
+        "enrich": "web",
+        "personalizer": "claude",
+        "throttle_seconds": 45,
+        "prompt": (
+            "You are helping someone pitch themselves as a podcast guest to the "
+            "team behind {domain} (location: {location}). Recipient: {name}, "
+            "{title}. Show context: {background}. The guest's topic/expertise: "
+            "{role}. Write a concise (<130 words) pitch that connects their "
+            "expertise to the show's audience, names one or two concrete episode "
+            "angles, and asks if a guest slot makes sense. Specific, zero flattery."
+        ),
+        "fallback_subject": "Guest idea for your show: {role}",
+    },
+    # Use case F — partnerships / business development.
+    # Input: target company + what you propose partnering on (via --role).
+    "partnerships": {
+        "source": "hunter",
+        "requires": ["company", "role"],
+        "targeting": {"department": "executive,management,sales", "seniority": "executive,senior"},
+        "enrich": "web",
+        "personalizer": "claude",
+        "throttle_seconds": 40,
+        "prompt": (
+            "You are helping someone propose a partnership to {company} "
+            "(location: {location}). Recipient: {name}, {title}. Company "
+            "context: {background}. The proposed collaboration: {role}. "
+            "Write a concise (<140 words) email that states the mutual benefit "
+            "in one or two lines, shows you understand what {company} does, and "
+            "asks for a short exploratory call. Credible and concrete, no hype."
+        ),
+        "fallback_subject": "Partnership idea for {company}",
+    },
+    # Use case G — recruiting.
+    # Input: company where the candidate works + the role you're hiring for
+    # (via --role). Targets engineering/technical people rather than HR.
+    "recruiting": {
+        "source": "hunter",
+        "requires": ["company", "role"],
+        "targeting": {"department": "it", "seniority": "senior"},
+        "enrich": None,
+        "personalizer": "claude",
+        "throttle_seconds": 45,
+        "prompt": (
+            "You are helping a recruiter/hiring manager write a short, respectful "
+            "cold email to a potential candidate currently at {company}. "
+            "Recipient: {name}, {title}. The open role: {role} "
+            "(location: {location}). Write a concise (<120 words) note that says "
+            "why their profile specifically fits, gives one honest reason the "
+            "role is compelling, and invites a low-pressure chat. Human tone, no "
+            "recruiter clichés, no exclamation marks."
+        ),
+        "fallback_subject": "{role} — would love to chat",
+    },
 }
 
 
