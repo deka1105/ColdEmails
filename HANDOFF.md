@@ -11,14 +11,26 @@ their emails (Hunter.io), researches background, drafts a personalized email
 One engine + swappable interfaces + per-campaign config. Built as a Python CLI
 with a Streamlit web UI on top.
 
-## Current status: working v1
+## Current status: working v1.1 (2026-07-05 enhancement pass)
 
-- 4 campaigns: `jobs`, `fundraising`, `b2b`, `pr` (`coldemails/campaigns.py`)
-- CLI: `preview`, `send`, `status`, `campaigns`, `discover-firms` (`cli.py`)
-- Streamlit UI: `app.py` (`streamlit run app.py`, port 8501)
-- 40 offline tests pass (`pytest`) — network + LLM stubbed
-- **Verified live**: real Hunter.io lookup (Stripe → 2 real prospects+emails) +
-  drafting via the Claude Code CLI, dry-run. End-to-end works.
+- 7 campaigns: `jobs`, `fundraising`, `b2b`, `pr`, `podcast`, `partnerships`,
+  `recruiting` (`coldemails/campaigns.py`)
+- CLI: `preview`, `send`, `status`, `campaigns`, `export` (CSV), `discover-firms`
+- Streamlit UI: `app.py` (`streamlit run app.py`, port 8501) — includes CSV
+  download in the status panel
+- 48 offline tests pass, 1 skipped (`pytest`) — network + LLM stubbed
+- **Verified live** (v1): real Hunter.io lookup + claude_cli drafting, dry-run.
+- New in v1.1:
+  - `company.resolve` uses Clearbit's free autocomplete API (keyless) with a
+    smarter slug fallback (strips legal suffixes). Disable network lookup with
+    `COLDEMAILS_NO_NETWORK_RESOLVE=1` (conftest sets it for tests).
+  - AI-written subject lines: both Claude renderers ask for `Subject: ...` +
+    blank line + body; `personalize._parse_email` splits, falls back to
+    `fallback_subject` if the model omits it.
+  - Expanded VC catalog (~85 firms) in `firmfinder.py`.
+  - `Dockerfile` + `.dockerignore` for the Streamlit UI (claude_cli mode won't
+    work in Docker — use the API-key mode there).
+  - `.venv/` created at repo root (gitignored) with deps + pytest.
 
 ## Architecture (all flat modules — see "gotchas" for why)
 

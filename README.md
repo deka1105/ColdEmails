@@ -253,8 +253,10 @@ Inside a container the Claude Code CLI login isn't available — set
 
 ## Status & limitations
 
-v1 ships the engine plus four campaigns (jobs, fundraising, b2b, pr), a CLI, a
-Streamlit UI, VC firm discovery, and an offline test suite.
+Current version ships the engine plus seven campaigns (jobs, fundraising, b2b,
+pr, podcast, partnerships, recruiting), a CLI with CSV export, a Streamlit UI,
+VC firm discovery, AI-written subject lines, company→domain resolution via
+Clearbit autocomplete (with a slug fallback), and an offline test suite.
 
 - Sending requires Gmail OAuth (one-time browser consent).
 - The Claude Code CLI draft mode needs the `claude` binary installed and logged
