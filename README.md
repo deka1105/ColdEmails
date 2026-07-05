@@ -40,9 +40,12 @@ finding, drafting, throttling, dedup, tracking — is shared.
 | **fundraising** | your domain + target firm domains | VCs / angel investors | their thesis / background |
 | **b2b** | target company + your offer (`--role`) | decision-makers | their likely pain point |
 | **pr** | publication domain + story angle (`--role`) | journalists / editors | their beat |
+| **podcast** | show domain + your topic (`--role`) | show producers / hosts | the show + episode angles |
+| **partnerships** | target company + proposal (`--role`) | BD / execs | mutual benefit |
+| **recruiting** | candidate's company + open role (`--role`) | senior technical people | their profile fit |
 
-The same engine extends to podcast booking, partnerships, backlinks, creator
-collabs, recruiting, and user interviews — each is just another config.
+The same engine extends to backlinks, creator collabs, user interviews, and
+more — each is just another config entry.
 
 ---
 
