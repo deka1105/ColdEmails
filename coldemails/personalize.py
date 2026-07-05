@@ -44,6 +44,25 @@ def _fill(text: str, fields: dict[str, str]) -> str:
     return text.format_map(_Safe(fields))
 
 
+_OUTPUT_INSTRUCTIONS = (
+    "\n\nOutput format: first line exactly 'Subject: <a specific subject under "
+    "60 chars>', then a blank line, then the email body only — no preamble, no "
+    "signature placeholder brackets."
+)
+
+
+def _parse_email(text: str, fallback_subject: str) -> Message:
+    """Split model output into (subject, body); tolerate a missing subject line."""
+    text = text.strip()
+    lines = text.splitlines()
+    if lines and lines[0].lower().startswith("subject:"):
+        subject = lines[0].split(":", 1)[1].strip() or fallback_subject
+        body = "\n".join(lines[1:]).strip()
+        if body:
+            return Message(subject=subject, body=body)
+    return Message(subject=fallback_subject, body=text)
+
+
 class Personalizer(ABC):
     name: str = "base"
 
