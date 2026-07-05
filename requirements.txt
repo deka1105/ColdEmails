@@ -1,0 +1,6 @@
+requests>=2.31
+anthropic>=0.40
+google-api-python-client>=2.100
+google-auth-oauthlib>=1.2
+python-dotenv>=1.0
+PyYAML>=6.0

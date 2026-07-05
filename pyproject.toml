@@ -1,0 +1,31 @@
+[project]
+name = "coldemails"
+version = "0.1.0"
+description = "Multi-purpose outreach automation: find people, personalize with AI, send via Gmail."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "requests>=2.31",
+    "anthropic>=0.40",
+    "google-api-python-client>=2.100",
+    "google-auth-oauthlib>=1.2",
+    "python-dotenv>=1.0",
+    "PyYAML>=6.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0"]
+ui = ["streamlit>=1.30"]
+
+[project.scripts]
+coldemails = "coldemails.cli:main"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["coldemails*"]

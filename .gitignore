@@ -1,0 +1,17 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+.env
+credentials.json
+token.json
+*.db
+.DS_Store
+
+# Auto-added by watcher
+.tox/
+node_modules/
+.mypy_cache/
+.pytest_cache/
+build/
+dist/
