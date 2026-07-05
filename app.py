@@ -218,7 +218,27 @@ def main() -> None:
     with st.expander("📊 Status for this campaign"):
         with Store(db_path()) as store:
             counts = store.counts_by_status(campaign_name)
+            rows = [dict(r) for r in store.list_prospects(campaign_name)]
         st.write(counts or "No prospects recorded yet.")
+        if rows:
+            import csv
+            import io
+
+            cols = [
+                "campaign", "name", "email", "title", "company", "domain",
+                "status", "subject", "body", "background", "error",
+            ]
+            buf = io.StringIO()
+            w = csv.writer(buf)
+            w.writerow(cols)
+            for r in rows:
+                w.writerow([r.get(c) for c in cols])
+            st.download_button(
+                "⬇️ Download CSV",
+                buf.getvalue(),
+                file_name=f"coldemails_{campaign_name}.csv",
+                mime="text/csv",
+            )
 
 
 if __name__ == "__main__":
