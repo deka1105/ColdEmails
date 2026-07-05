@@ -85,6 +85,32 @@ def test_get_personalizer_unknown():
         get_personalizer("nope")
 
 
+def test_parse_email_with_subject_line():
+    from coldemails.personalize import _parse_email
+
+    msg = _parse_email("Subject: Quick intro\n\nHi Jane,\nbody here.", "fallback")
+    assert msg.subject == "Quick intro"
+    assert msg.body == "Hi Jane,\nbody here."
+
+
+def test_parse_email_without_subject_uses_fallback():
+    from coldemails.personalize import _parse_email
+
+    msg = _parse_email("Hi Jane, just the body.", "fallback")
+    assert msg.subject == "fallback"
+    assert msg.body == "Hi Jane, just the body."
+
+
+def test_parse_email_empty_subject_or_body_degrades_gracefully():
+    from coldemails.personalize import _parse_email
+
+    msg = _parse_email("Subject: \n\nBody.", "fb")
+    assert msg.subject == "fb"
+    msg2 = _parse_email("Subject: Only a subject", "fb")
+    assert msg2.subject == "fb"  # no body after the subject line
+    assert msg2.body == "Subject: Only a subject"
+
+
 def test_claude_cli_renderer(monkeypatch):
     import subprocess
 
