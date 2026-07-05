@@ -87,6 +87,31 @@ def _campaigns(_a: argparse.Namespace) -> int:
     return 0
 
 
+def _export(a: argparse.Namespace) -> int:
+    import csv
+
+    with Store(env("COLDEMAILS_DB", "coldemails.db")) as store:
+        rows = store.list_prospects(a.campaign)
+    if not rows:
+        print("No prospects recorded yet.")
+        return 0
+    cols = [
+        "campaign", "name", "email", "title", "company", "domain",
+        "status", "subject", "body", "background", "error",
+    ]
+    out = open(a.out, "w", newline="") if a.out else sys.stdout
+    try:
+        w = csv.writer(out)
+        w.writerow(cols)
+        for r in rows:
+            w.writerow([r[c] for c in cols])
+    finally:
+        if a.out:
+            out.close()
+            print(f"Wrote {len(rows)} row(s) to {a.out}", file=sys.stderr)
+    return 0
+
+
 def _discover_firms(a: argparse.Namespace) -> int:
     from .firmfinder import discover
 
