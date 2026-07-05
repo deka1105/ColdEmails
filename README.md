@@ -119,6 +119,7 @@ coldemails campaigns                    # list campaigns
 coldemails preview --campaign ... [...]  # dry-run: find + draft, never sends
 coldemails send    --campaign ... [...]  # find, draft, and send via Gmail
 coldemails status  [--campaign ...]      # counts by status
+coldemails export  [--campaign ...] [--out file.csv]   # CSV of prospects+drafts
 coldemails discover-firms [...]          # find VC/angel firm domains
 ```
 
@@ -235,8 +236,18 @@ pip install -e ".[dev]"
 pytest
 ```
 
-The suite (40 tests) stubs the network (Hunter, Serper) and the LLM, so it runs
+The suite stubs the network (Hunter, Serper, Clearbit) and the LLM, so it runs
 offline with no credentials.
+
+### Docker (web UI)
+
+```bash
+docker build -t coldemails .
+docker run --rm -p 8501:8501 --env-file .env -v $(pwd)/data:/data coldemails
+```
+
+Inside a container the Claude Code CLI login isn't available — set
+`ANTHROPIC_API_KEY` and use the "Claude API key" draft mode (or "template").
 
 ---
 
