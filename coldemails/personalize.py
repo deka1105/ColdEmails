@@ -93,19 +93,15 @@ class ClaudeRenderer(Personalizer):
     def render(self, person: Person, criteria: Criteria, campaign: dict[str, Any]) -> Message:
         fields = _fields(person, criteria, campaign)
         instruction = _fill(campaign.get("prompt", ""), fields)
-        prompt = (
-            instruction
-            + "\n\nReturn only the email body — no subject line, no preamble, "
-            "no signature placeholder brackets."
-        )
+        prompt = instruction + _OUTPUT_INSTRUCTIONS
         resp = self.client.messages.create(
             model=CLAUDE_MODEL,
             max_tokens=500,
             messages=[{"role": "user", "content": prompt}],
         )
-        body = "".join(block.text for block in resp.content if block.type == "text").strip()
-        subject = _fill(campaign.get("fallback_subject", "Hello"), fields)
-        return Message(subject=subject, body=body)
+        text = "".join(block.text for block in resp.content if block.type == "text")
+        fallback = _fill(campaign.get("fallback_subject", "Hello"), fields)
+        return _parse_email(text, fallback)
 
 
 class ClaudeCLIRenderer(Personalizer):
