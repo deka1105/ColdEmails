@@ -140,9 +140,8 @@ class ClaudeCLIRenderer(Personalizer):
             raise RuntimeError("claude CLI timed out") from e
         if proc.returncode != 0:
             raise RuntimeError(f"claude CLI failed: {proc.stderr.strip()[:200]}")
-        body = proc.stdout.strip()
-        subject = _fill(campaign.get("fallback_subject", "Hello"), fields)
-        return Message(subject=subject, body=body)
+        fallback = _fill(campaign.get("fallback_subject", "Hello"), fields)
+        return _parse_email(proc.stdout, fallback)
 
 
 _RENDERERS: dict[str, type[Personalizer]] = {
