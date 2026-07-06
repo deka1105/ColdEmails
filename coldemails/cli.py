@@ -117,6 +117,27 @@ def _export(a: argparse.Namespace) -> int:
     return 0
 
 
+def _test_send(a: argparse.Namespace) -> int:
+    """Send one test email (default: to yourself) to verify Gmail OAuth end-to-end."""
+    from .gmail import GmailSender
+    from .models import Message
+
+    to = a.to or env("SENDER_EMAIL", required=True)
+    msg = Message(
+        subject="ColdEmails test — Gmail is configured",
+        body=(
+            "This is a test email from ColdEmails.\n\n"
+            "If you're reading it, Gmail OAuth, sending, and MIME assembly "
+            "all work. You're ready for real campaigns.\n"
+        ),
+        attachments=a.attach or [],
+    )
+    print(f"Sending test email to {to} ...", file=sys.stderr)
+    GmailSender().send(to, msg)
+    print(f"Sent. Check {to}'s inbox.")
+    return 0
+
+
 def _discover_firms(a: argparse.Namespace) -> int:
     from .firmfinder import discover
 
