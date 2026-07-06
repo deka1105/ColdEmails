@@ -221,8 +221,9 @@ auto-fills the target list from your selection.
 1. In Google Cloud, create an **OAuth client (Desktop app)** for the Gmail API and
    download the client secret JSON.
 2. Point `GMAIL_CREDENTIALS_FILE` at it and set `SENDER_NAME` / `SENDER_EMAIL`.
-3. The first `send` opens a browser consent and caches a token at
-   `GMAIL_TOKEN_FILE`.
+3. Verify with a one-off test email to yourself:
+   `coldemails test-send` — the first run opens a browser consent and caches a
+   token at `GMAIL_TOKEN_FILE`; after that, sends are silent.
 4. Sends are throttled (30–45s apart) to protect deliverability. **Test by
    sending one email to yourself before any real campaign.**
 
