@@ -168,6 +168,9 @@ coldemails preview --campaign fundraising --domain mystartup.com --location SF \
 # B2B sales — offer goes in --role
 coldemails preview --campaign b2b --company Acme --role "observability tooling" --location NYC
 
+# Attach a resume to every email in the run
+coldemails preview --campaign jobs --company Stripe --role "ML Engineer" --attach resume.pdf
+
 # When happy, send (throttled) — test with your own address first
 coldemails send --campaign jobs --company Stripe --role "ML Engineer"
 ```

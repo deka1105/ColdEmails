@@ -35,6 +35,11 @@ with a Streamlit web UI on top.
   - `Dockerfile` + `.dockerignore` for the Streamlit UI (claude_cli mode won't
     work in Docker — use the API-key mode there).
   - `.venv/` created at repo root (gitignored) with deps + pytest.
+  - Attachments (2026-07-06): `Message.attachments` (file paths), `gmail.build_mime`
+    (multipart when present), `Engine.run(attachments=...)` validates paths and
+    falls back to an optional campaign-level `attachments` default; CLI `--attach`
+    (repeatable); UI file-uploader in Step 03 (temp-dir persisted), listed in the
+    send-confirm dialog and dry-run output.
 
 ## Architecture (all flat modules — see "gotchas" for why)
 
