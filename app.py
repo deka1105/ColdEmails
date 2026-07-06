@@ -173,10 +173,10 @@ div.st-key-firms_panel, div.st-key-action_bar {
 }
 
 /* ---- segmented control / slider --------------------------------------- */
-[data-testid="stSegmentedControl"] button {
+[data-testid="stButtonGroup"] button {
   font-size: 13px; background: $hairline; color: $text_mid; border-color: $border;
 }
-[data-testid="stSegmentedControl"] button[aria-checked="true"] {
+[data-testid="stButtonGroup"] button[aria-checked="true"] {
   background: $surface; color: $accent_text2; border-color: $accent;
 }
 .stSlider [data-baseweb="slider"] div[role="slider"] {
