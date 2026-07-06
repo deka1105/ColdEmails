@@ -358,12 +358,13 @@ def credentials_sidebar() -> None:
 # ---------------------------------------------------------------------------
 # Run helpers (unchanged wiring — test_app.py depends on this signature)
 # ---------------------------------------------------------------------------
-def run_engine(campaign_name, args, limit, send, personalizer):
+def run_engine(campaign_name, args, limit, send, personalizer, attachments=None):
     logs: list[str] = []
     with Store(db_path()) as store:
         engine = Engine(store, log=logs.append)
         result = engine.run(
-            campaign_name, args, limit=limit, send=send, personalizer=personalizer
+            campaign_name, args, limit=limit, send=send,
+            personalizer=personalizer, attachments=attachments,
         )
         rows = [dict(r) for r in store.list_prospects(campaign_name)]
     return result, logs, rows

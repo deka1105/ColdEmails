@@ -64,7 +64,8 @@ def _run(a: argparse.Namespace, send: bool) -> int:
     with Store(env("COLDEMAILS_DB", "coldemails.db")) as store:
         engine = Engine(store, log=lambda m: print(m, file=sys.stderr))
         res = engine.run(
-            a.campaign, _criteria(a), limit=a.limit, send=send, personalizer=a.draft
+            a.campaign, _criteria(a), limit=a.limit, send=send,
+            personalizer=a.draft, attachments=a.attach,
         )
     verb = "SENT" if send else "PREVIEW"
     print(
