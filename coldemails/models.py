@@ -36,6 +36,8 @@ class Message:
 
     subject: str
     body: str
+    # Local file paths attached at send time (e.g. a resume for jobs outreach).
+    attachments: list[str] = field(default_factory=list)
 
 
 @dataclass
