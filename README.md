@@ -49,6 +49,27 @@ more — each is just another config entry.
 
 ---
 
+## Quickstart (Claude Code)
+
+The fastest path — three steps:
+
+```bash
+git clone https://github.com/deka1105/ColdEmails.git && cd ColdEmails
+./setup.sh YOUR_HUNTER_API_KEY     # venv + deps + .env + tests (key optional here)
+claude                             # open a Claude Code session in the repo
+```
+
+Then type **`/coldemails`** in the session. It finishes any missing setup
+(asking for your Hunter key if you skipped it), verifies the tests, launches
+the web UI, and hands you the link — live at **http://localhost:8501**. You can
+also pass it a task directly, e.g. `/coldemails preview jobs at Stripe for ML
+Engineer`.
+
+Not using Claude Code? `./setup.sh` alone does the setup; then
+`.venv/bin/streamlit run app.py`.
+
+---
+
 ## Install
 
 Requires Python 3.10+.
