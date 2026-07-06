@@ -18,6 +18,7 @@ finding, drafting, throttling, dedup, tracking — is shared.
 ## Contents
 
 - [Use cases](#use-cases)
+- [Quickstart (Claude Code)](#quickstart-claude-code)
 - [Install](#install)
 - [Configuration (.env)](#configuration-env)
 - [Personalization / draft modes](#personalization--draft-modes)
