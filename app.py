@@ -455,6 +455,45 @@ def show_result(result, logs, rows, meta: str) -> None:
         )
 
 
+def show_history(counts: dict, rows: list[dict], campaign_name: str) -> None:
+    """Past prospects for this campaign (shown when there's no fresh run)."""
+    st.divider()
+    c1, c2 = st.columns([1, 2])
+    c1.markdown("**Previous prospects**")
+    meta = " · ".join(f"{n} {s}" for s, n in sorted(counts.items()))
+    c2.markdown(
+        f'<div class="ce-run-meta" style="text-align:right">{meta}</div>',
+        unsafe_allow_html=True,
+    )
+    for r in rows:
+        title = r["name"] or "(no name)"
+        email = r.get("email") or "no email"
+        with st.expander(f"{title} — {email}   ·   {r['status']}"):
+            st.markdown(badge(r["status"]), unsafe_allow_html=True)
+            meta_line = " · ".join(str(x) for x in [r.get("title"), r.get("company")] if x)
+            if meta_line:
+                st.caption(meta_line)
+            if r.get("subject"):
+                st.markdown(
+                    '<div class="ce-mono-label">Subject</div>'
+                    f'<div style="font-size:14px;font-weight:600">{r["subject"]}</div>',
+                    unsafe_allow_html=True,
+                )
+            if r.get("body"):
+                st.markdown('<div class="ce-mono-label">Body</div>', unsafe_allow_html=True)
+                st.text_area(
+                    "Body", r["body"], height=180,
+                    key=f"hbody_{r['dedup_key']}", label_visibility="collapsed",
+                )
+            if r.get("error"):
+                st.error(r["error"])
+    with st.container(key="btn_csv"):
+        st.download_button(
+            "Download CSV", prospects_csv(rows),
+            file_name=f"coldemails_{campaign_name}.csv", mime="text/csv",
+        )
+
+
 def empty_state() -> None:
     st.markdown(
         """
