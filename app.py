@@ -173,7 +173,12 @@ div.st-key-firms_panel, div.st-key-action_bar {
 }
 
 /* ---- segmented control / slider --------------------------------------- */
-[data-testid="stSegmentedControl"] button { font-size: 13px; }
+[data-testid="stSegmentedControl"] button {
+  font-size: 13px; background: $hairline; color: $text_mid; border-color: $border;
+}
+[data-testid="stSegmentedControl"] button[aria-checked="true"] {
+  background: $surface; color: $accent_text2; border-color: $accent;
+}
 .stSlider [data-baseweb="slider"] div[role="slider"] {
   background: $surface; border: 2px solid $accent;
 }
@@ -304,8 +309,9 @@ def badge(status: str) -> str:
 def credentials_sidebar() -> None:
     t = T()
 
-    def row(label: str, env_name: str, note: str) -> str:
-        is_set = bool(os.environ.get(env_name))
+    def row(label: str, env_name: str, note: str, is_set: bool | None = None) -> str:
+        if is_set is None:
+            is_set = bool(os.environ.get(env_name))
         dot = t["green"] if is_set else t["border_strong"]
         lbl_cls = "lbl" if is_set else "lbl off"
         note_color = t["muted"] if note == "required" else t["faint"]
