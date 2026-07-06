@@ -76,14 +76,22 @@ class Engine:
         limit: int = 10,
         send: bool = False,
         personalizer: str | None = None,
+        attachments: list[str] | None = None,
     ) -> RunResult:
         """Run the pipeline. ``send=False`` is a dry-run (renders, never sends).
 
         ``personalizer`` overrides the campaign's default renderer — e.g. pass
-        "template" to draft without an LLM / API key.
+        "template" to draft without an LLM / API key. ``attachments`` are local
+        file paths attached to every email in the run (falls back to the
+        campaign's optional ``attachments`` default).
         """
         campaign = get_campaign(campaign_name)
         criteria = self._build_criteria(campaign_name, campaign, args)
+
+        attachments = list(attachments or campaign.get("attachments") or [])
+        for path in attachments:
+            if not os.path.isfile(path):
+                raise ValueError(f"Attachment not found: {path}")
 
         source = get_source(campaign["source"])
         enricher = get_enricher(campaign.get("enrich"))
