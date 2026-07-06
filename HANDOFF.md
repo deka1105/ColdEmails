@@ -76,7 +76,10 @@ No engine changes needed — that's the core design.
 - `.env` exists and is **gitignored**. It holds a real `HUNTER_API_KEY`
   (`dcc020c7...` — user-provided). Do NOT commit `.env`.
 - No Anthropic key set (not needed with `claude_cli`).
-- Gmail not yet configured → real sending untested.
+- Gmail: SENDER_EMAIL/SENDER_NAME set in `.env`, Google client libs installed,
+  `coldemails test-send` command ready — **waiting only on the user's
+  `credentials.json`** (OAuth Desktop client from Google Cloud) + one browser
+  consent. Real sending still untested until then.
 
 ## Environment gotchas (these bit me; they'll bite you)
 
