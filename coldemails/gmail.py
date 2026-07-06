@@ -8,13 +8,45 @@ OAuth client secret downloaded from Google Cloud; the token is cached at
 from __future__ import annotations
 
 import base64
+import mimetypes
+import os
 from abc import ABC, abstractmethod
+from email.mime.base import MIMEBase
+from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from email import encoders
 
 from .config import env
 from .models import Message
 
 SCOPES = ["https://www.googleapis.com/auth/gmail.send"]
+
+
+def build_mime(sender: str, to: str, message: Message):
+    """Assemble the MIME email: plain text, multipart when attachments exist."""
+    if not message.attachments:
+        mime = MIMEText(message.body)
+    else:
+        mime = MIMEMultipart()
+        mime.attach(MIMEText(message.body))
+        for path in message.attachments:
+            ctype, encoding = mimetypes.guess_type(path)
+            if ctype is None or encoding is not None:
+                ctype = "application/octet-stream"
+            maintype, subtype = ctype.split("/", 1)
+            part = MIMEBase(maintype, subtype)
+            with open(path, "rb") as f:
+                part.set_payload(f.read())
+            encoders.encode_base64(part)
+            part.add_header(
+                "Content-Disposition", "attachment",
+                filename=os.path.basename(path),
+            )
+            mime.attach(part)
+    mime["To"] = to
+    mime["From"] = sender
+    mime["Subject"] = message.subject
+    return mime
 
 
 class Sender(ABC):
