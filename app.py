@@ -676,6 +676,21 @@ def main() -> None:
         "Template": "template",
     }[mode or "Claude Code CLI"]
 
+    uploads = st.file_uploader(
+        "Attachments (optional)", accept_multiple_files=True,
+        help="Attached to every email in this run — e.g. your resume for job outreach.",
+    )
+    attachments: list[str] = []
+    if uploads:
+        import tempfile
+
+        updir = st.session_state.setdefault("upload_dir", tempfile.mkdtemp(prefix="coldemails_"))
+        for up in uploads:
+            path = os.path.join(updir, up.name)
+            with open(path, "wb") as f:
+                f.write(up.getbuffer())
+            attachments.append(path)
+
     with st.container(key="action_bar"):
         b1, b2, b3 = st.columns([1.1, 1, 1.4], vertical_alignment="center")
         with b1, st.container(key="btn_preview"):
@@ -707,7 +722,8 @@ def main() -> None:
             try:
                 with st.spinner("Finding people and drafting…"):
                     res = run_engine(
-                        campaign_name, args, limit, send=False, personalizer=personalizer
+                        campaign_name, args, limit, send=False,
+                        personalizer=personalizer, attachments=attachments,
                     )
                 st.session_state["last_run"] = (res, "preview", campaign_name)
                 st.toast("Preview complete — nothing was sent.")
