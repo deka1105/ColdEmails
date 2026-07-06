@@ -516,7 +516,7 @@ def empty_state() -> None:
 # Send-confirm dialog (design §Send-confirm dialog)
 # ---------------------------------------------------------------------------
 @st.dialog("Send emails via Gmail?")
-def confirm_send_dialog(campaign_name, args, limit, personalizer, throttle):
+def confirm_send_dialog(campaign_name, args, limit, personalizer, throttle, attachments=None):
     t = T()
     st.markdown(
         f'<span style="font-size:13px;color:{t["muted"]}">This sends real email '
@@ -524,6 +524,10 @@ def confirm_send_dialog(campaign_name, args, limit, personalizer, throttle):
         unsafe_allow_html=True,
     )
     sender = os.environ.get("SENDER_EMAIL", "(SENDER_EMAIL not set)")
+    attach_row = ""
+    if attachments:
+        names = ", ".join(os.path.basename(p) for p in attachments)
+        attach_row = f"| **Attachments** | {names} |\n"
     st.markdown(
         f"""
 | | |
@@ -531,7 +535,7 @@ def confirm_send_dialog(campaign_name, args, limit, personalizer, throttle):
 | **Campaign** | {campaign_name} |
 | **Max prospects** | {limit} |
 | **Throttle** | {throttle} s between sends |
-| **From** | `{sender}` |
+{attach_row}| **From** | `{sender}` |
 """
     )
     ok = st.checkbox("I previewed these drafts")
@@ -736,7 +740,7 @@ def main() -> None:
         else:
             confirm_send_dialog(
                 campaign_name, args, limit, personalizer,
-                campaign.get("throttle_seconds", 30),
+                campaign.get("throttle_seconds", 30), attachments,
             )
 
     # --- Results / history / empty state -------------------------------------
