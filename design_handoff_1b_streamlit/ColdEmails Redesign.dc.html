@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&amp;family=Geist+Mono:wght@400;500;600&amp;family=Source+Sans+3:wght@400;600;700&amp;display=swap" rel="stylesheet">
+<style>
+  body { margin:0; background:#F0EEEB; font-family:'Geist',system-ui,sans-serif; color:#1C1917; -webkit-font-smoothing:antialiased; }
+  * { box-sizing:border-box; }
+</style>
+</helmet>
+
+<section style="display:flex;flex-wrap:wrap;gap:64px;align-items:flex-start;padding:56px">
+
+  <!-- ================= 1a — CURRENT STREAMLIT UI (reference recreation) ================= -->
+  <div id="1a" style="display:flex;flex-direction:column;gap:14px">
+    <div style="display:flex;gap:10px;align-items:baseline">
+      <a href="#1a" style="font-family:'Geist Mono',monospace;font-size:12px;font-weight:600;background:#1C1917;color:#fff;border-radius:6px;padding:3px 9px;text-decoration:none">1a</a>
+      <div style="font-size:14px;font-weight:600">Current Streamlit UI</div>
+      <div style="font-size:13px;color:#78716C">faithful recreation of app.py, post-preview state</div>
+    </div>
+    <div style="width:1440px;background:#fff;border:1px solid #E7E5E4;border-radius:12px;overflow:hidden;box-shadow:0 24px 48px -24px rgba(28,25,23,.18);display:flex;font-family:'Source Sans 3',sans-serif;color:#31333F">
+      <!-- Streamlit sidebar -->
+      <div style="width:250px;flex-shrink:0;background:#F0F2F6;padding:56px 20px 24px;display:flex;flex-direction:column;gap:14px">
+        <div style="font-size:24px;font-weight:700">⚙️ Configuration</div>
+        <div style="font-size:14px;color:rgba(49,51,63,.6)">Read from the environment / <code style="font-family:'Geist Mono',monospace;font-size:12px;color:#09AB3B;background:rgba(49,51,63,.08);padding:1px 4px;border-radius:4px">.env</code>. Set these via the CLI, not here.</div>
+        <div style="font-size:14px;line-height:1.55">✅ <strong>Hunter.io key</strong><br><code style="font-family:'Geist Mono',monospace;font-size:12px;color:#09AB3B;background:rgba(49,51,63,.08);padding:1px 4px;border-radius:4px">HUNTER_API_KEY</code> · required to find people</div>
+        <div style="font-size:14px;line-height:1.55">— <strong>Anthropic key</strong><br><code style="font-family:'Geist Mono',monospace;font-size:12px;color:#09AB3B;background:rgba(49,51,63,.08);padding:1px 4px;border-radius:4px">ANTHROPIC_API_KEY</code> · optional (only for 'Claude API key' mode)</div>
+        <div style="font-size:14px;line-height:1.55">— <strong>Serper key</strong><br><code style="font-family:'Geist Mono',monospace;font-size:12px;color:#09AB3B;background:rgba(49,51,63,.08);padding:1px 4px;border-radius:4px">SERPER_API_KEY</code> · optional (search enrichment)</div>
+        <div style="height:1px;background:rgba(49,51,63,.2);margin:6px 0"></div>
+        <div style="font-size:14px;line-height:1.55">✅ <strong>Sender email</strong><br><code style="font-family:'Geist Mono',monospace;font-size:12px;color:#09AB3B;background:rgba(49,51,63,.08);padding:1px 4px;border-radius:4px">SENDER_EMAIL</code> · required to send</div>
+        <div style="font-size:14px;line-height:1.55">✅ <strong>Gmail OAuth file</strong><br><code style="font-family:'Geist Mono',monospace;font-size:12px;color:#09AB3B;background:rgba(49,51,63,.08);padding:1px 4px;border-radius:4px">GMAIL_CREDENTIALS_FILE</code></div>
+        <div style="font-size:14px;color:rgba(49,51,63,.6)">The default <strong>Claude Code CLI</strong> draft mode needs no Anthropic key.</div>
+      </div>
+      <!-- Streamlit main -->
+      <div style="flex:1;padding:56px 64px 64px;display:flex;flex-direction:column;gap:18px">
+        <div style="font-size:44px;font-weight:700;line-height:1.2">✉️ ColdEmails</div>
+        <div style="font-size:14px;color:rgba(49,51,63,.6);margin-top:-10px">Find the right people, personalize with AI, and send — no command line needed.</div>
+        <div>
+          <div style="font-size:14px;margin-bottom:6px">Campaign</div>
+          <div style="background:#F0F2F6;border-radius:8px;height:40px;display:flex;align-items:center;justify-content:space-between;padding:0 12px;font-size:16px;max-width:100%">Job outreach (company + role)<span style="color:rgba(49,51,63,.6);font-size:13px">▾</span></div>
+        </div>
+        <div style="font-size:26px;font-weight:600;margin-top:8px">Inputs</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+          <div><div style="font-size:14px;margin-bottom:6px">Company name *</div><div style="background:#F0F2F6;border-radius:8px;height:40px;display:flex;align-items:center;padding:0 12px;font-size:16px">Stripe</div></div>
+          <div><div style="font-size:14px;margin-bottom:6px">Role / offer / story angle *</div><div style="background:#F0F2F6;border-radius:8px;height:40px;display:flex;align-items:center;padding:0 12px;font-size:16px">ML Engineer</div></div>
+          <div><div style="font-size:14px;margin-bottom:6px">Your domain (e.g. startup domain)</div><div style="background:#F0F2F6;border-radius:8px;height:40px;display:flex;align-items:center;padding:0 12px;font-size:16px;color:rgba(49,51,63,.4)"></div></div>
+          <div><div style="font-size:14px;margin-bottom:6px">Location</div><div style="background:#F0F2F6;border-radius:8px;height:40px;display:flex;align-items:center;padding:0 12px;font-size:16px">Berlin</div></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:end">
+          <div>
+            <div style="font-size:14px;margin-bottom:22px">Max prospects</div>
+            <div style="position:relative;height:20px;margin:0 2px">
+              <div style="position:absolute;top:8px;left:0;right:0;height:4px;background:rgba(49,51,63,.1);border-radius:2px"></div>
+              <div style="position:absolute;top:8px;left:0;width:37%;height:4px;background:#FF4B4B;border-radius:2px"></div>
+              <div style="position:absolute;top:2px;left:calc(37% - 8px);width:16px;height:16px;background:#FF4B4B;border-radius:50%"></div>
+              <div style="position:absolute;top:-22px;left:calc(37% - 8px);color:#FF4B4B;font-size:14px;font-weight:600">10</div>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:13px;color:rgba(49,51,63,.6);margin-top:6px"><span>1</span><span>25</span></div>
+          </div>
+          <div>
+            <div style="font-size:14px;margin-bottom:6px;display:flex;align-items:center;gap:6px">Draft mode <span style="width:15px;height:15px;border-radius:50%;border:1px solid rgba(49,51,63,.4);color:rgba(49,51,63,.5);font-size:10px;display:inline-flex;align-items:center;justify-content:center">?</span></div>
+            <div style="background:#F0F2F6;border-radius:8px;height:40px;display:flex;align-items:center;justify-content:space-between;padding:0 12px;font-size:16px">Claude Code CLI (no API key)<span style="color:rgba(49,51,63,.6);font-size:13px">▾</span></div>
+          </div>
+        </div>
+        <div style="height:1px;background:rgba(49,51,63,.2);margin:8px 0"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+          <div style="background:#FF4B4B;color:#fff;border-radius:8px;height:40px;display:flex;align-items:center;justify-content:center;font-size:16px">🔍 Preview (dry-run)</div>
+          <div style="background:#fff;border:1px solid rgba(49,51,63,.2);border-radius:8px;height:40px;display:flex;align-items:center;justify-content:center;font-size:16px">📤 Send via Gmail</div>
+        </div>
+        <div style="background:rgba(33,195,84,.1);color:#177233;border-radius:8px;padding:14px 16px;font-size:16px">Preview complete — nothing was sent.</div>
+        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:16px;margin:6px 0">
+          <div><div style="font-size:14px">Found</div><div style="font-size:36px;line-height:1.2">8</div></div>
+          <div><div style="font-size:14px">Rendered</div><div style="font-size:36px;line-height:1.2">8</div></div>
+          <div><div style="font-size:14px">Sent</div><div style="font-size:36px;line-height:1.2">0</div></div>
+          <div><div style="font-size:14px">Skipped</div><div style="font-size:36px;line-height:1.2">2</div></div>
+          <div><div style="font-size:14px">Failed</div><div style="font-size:36px;line-height:1.2">0</div></div>
+        </div>
+        <div style="border:1px solid rgba(49,51,63,.2);border-radius:8px;padding:12px 16px;display:flex;justify-content:space-between;font-size:16px">Run log<span style="color:rgba(49,51,63,.6)">▸</span></div>
+        <div style="font-size:26px;font-weight:600;margin-top:8px">Prospects &amp; drafted emails</div>
+        <div style="border:1px solid rgba(49,51,63,.2);border-radius:8px">
+          <div style="padding:12px 16px;display:flex;justify-content:space-between;font-size:16px">Anna Weber — anna.weber@stripe.com  ·  previewed<span style="color:rgba(49,51,63,.6)">▾</span></div>
+          <div style="padding:0 16px 16px;display:flex;flex-direction:column;gap:12px">
+            <div style="font-size:14px;color:rgba(49,51,63,.6)">Recruiting Lead · Stripe · stripe.com</div>
+            <div style="font-size:16px"><strong>Subject:</strong> Interested in ML Engineer opportunities at Stripe</div>
+            <div>
+              <div style="font-size:14px;margin-bottom:6px">Body</div>
+              <div style="background:#F0F2F6;border-radius:8px;padding:12px;font-size:16px;line-height:1.5;height:180px;overflow:hidden">Hi Anna,
+
+I've followed Stripe's ML work on payment risk for a while — the Radar write-ups especially. I'm an ML engineer (5 yrs, fraud + ranking systems) based in Berlin and saw you're growing the team there.
+
+Would you be open to a short chat about ML Engineer openings? Happy to share specifics on what I've shipped.
+
+Thanks,
+Dhruv</div>
+            </div>
+          </div>
+        </div>
+        <div style="border:1px solid rgba(49,51,63,.2);border-radius:8px;padding:12px 16px;display:flex;justify-content:space-between;font-size:16px">Jonas Meyer — jonas.meyer@stripe.com  ·  previewed<span style="color:rgba(49,51,63,.6)">▸</span></div>
+        <div style="border:1px solid rgba(49,51,63,.2);border-radius:8px;padding:12px 16px;display:flex;justify-content:space-between;font-size:16px">Priya Shah — no email  ·  skipped<span style="color:rgba(49,51,63,.6)">▸</span></div>
+        <div style="height:1px;background:rgba(49,51,63,.2);margin:8px 0"></div>
+        <div style="border:1px solid rgba(49,51,63,.2);border-radius:8px;padding:12px 16px;display:flex;justify-content:space-between;font-size:16px">📊 Status for this campaign<span style="color:rgba(49,51,63,.6)">▸</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= 1b — DIRECTION A: Streamlit-shaped, light ================= -->
+  <div id="1b" style="display:flex;flex-direction:column;gap:14px">
+    <div style="display:flex;gap:10px;align-items:baseline">
+      <a href="#1b" style="font-family:'Geist Mono',monospace;font-size:12px;font-weight:600;background:#1C1917;color:#fff;border-radius:6px;padding:3px 9px;text-decoration:none">1b</a>
+      <div style="font-size:14px;font-weight:600">Direction A — Streamlit-shaped</div>
+      <div style="font-size:13px;color:#78716C">sidebar + single column; portable to Streamlit almost 1:1 · fundraising flow, post-preview</div>
+    </div>
+    <div style="width:1440px;background:#FAFAF9;border:1px solid #E7E5E4;border-radius:12px;overflow:hidden;box-shadow:0 24px 48px -24px rgba(28,25,23,.18);display:flex">
+      <!-- Sidebar -->
+      <div style="width:280px;flex-shrink:0;background:#fff;border-right:1px solid #E7E5E4;padding:28px 24px;display:flex;flex-direction:column;gap:24px">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="width:24px;height:18px;border:1.5px solid #1C1917;border-radius:4px;position:relative;overflow:hidden;background:#fff"><div style="position:absolute;width:17px;height:17px;border:1.5px solid #1C1917;transform:rotate(45deg);top:-11px;left:2.2px;background:#fff"></div></div>
+          <div style="font-size:15px;font-weight:600;letter-spacing:-.01em">ColdEmails</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.1em;color:#A8A29E;margin-bottom:8px">CONFIGURATION</div>
+          <div style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px"><div style="width:8px;height:8px;border-radius:50%;background:#16A34A;flex-shrink:0"></div><div style="flex:1"><div style="font-size:13px;font-weight:500">Hunter.io key</div><div style="font-family:'Geist Mono',monospace;font-size:11px;color:#A8A29E">HUNTER_API_KEY</div></div><div style="font-size:11px;color:#78716C">required</div></div>
+          <div style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px"><div style="width:8px;height:8px;border-radius:50%;background:#D6D3D1;flex-shrink:0"></div><div style="flex:1"><div style="font-size:13px;font-weight:500;color:#78716C">Anthropic key</div><div style="font-family:'Geist Mono',monospace;font-size:11px;color:#A8A29E">ANTHROPIC_API_KEY</div></div><div style="font-size:11px;color:#A8A29E">optional</div></div>
+          <div style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px"><div style="width:8px;height:8px;border-radius:50%;background:#D6D3D1;flex-shrink:0"></div><div style="flex:1"><div style="font-size:13px;font-weight:500;color:#78716C">Serper key</div><div style="font-family:'Geist Mono',monospace;font-size:11px;color:#A8A29E">SERPER_API_KEY</div></div><div style="font-size:11px;color:#A8A29E">optional</div></div>
+          <div style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px"><div style="width:8px;height:8px;border-radius:50%;background:#16A34A;flex-shrink:0"></div><div style="flex:1"><div style="font-size:13px;font-weight:500">Sender email</div><div style="font-family:'Geist Mono',monospace;font-size:11px;color:#A8A29E">SENDER_EMAIL</div></div><div style="font-size:11px;color:#78716C">required</div></div>
+          <div style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px"><div style="width:8px;height:8px;border-radius:50%;background:#16A34A;flex-shrink:0"></div><div style="flex:1"><div style="font-size:13px;font-weight:500">Gmail OAuth</div><div style="font-family:'Geist Mono',monospace;font-size:11px;color:#A8A29E">GMAIL_CREDENTIALS_FILE</div></div><div style="font-size:11px;color:#78716C">required</div></div>
+        </div>
+        <div style="background:#FAFAF9;border:1px solid #E7E5E4;border-radius:10px;padding:12px 14px;font-size:12px;line-height:1.55;color:#78716C">Keys live in <span style="font-family:'Geist Mono',monospace;font-size:11px;color:#57534E">.env</span>, not the UI. Edit the file and restart the app to reload.</div>
+        <div style="margin-top:auto;display:flex;flex-direction:column;gap:14px">
+          <div style="display:flex;align-items:center;justify-content:space-between"><div style="font-size:13px;color:#57534E">Dark mode</div><div style="width:34px;height:20px;border-radius:999px;background:#E7E5E4;position:relative"><div style="position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(28,25,23,.2)"></div></div></div>
+          <div style="font-family:'Geist Mono',monospace;font-size:11px;color:#A8A29E">SQLite · coldemails.db</div>
+        </div>
+      </div>
+      <!-- Main -->
+      <div style="flex:1;padding:56px 64px 72px;display:flex;justify-content:center">
+        <div style="width:100%;max-width:860px;display:flex;flex-direction:column;gap:48px">
+          <div>
+            <div style="font-size:26px;font-weight:600;letter-spacing:-.02em">New campaign</div>
+            <div style="font-size:14px;color:#78716C;margin-top:6px">Find the right people, draft with AI, send only when you're sure.</div>
+          </div>
+          <!-- Step 1 -->
+          <div style="display:flex;flex-direction:column;gap:16px">
+            <div style="display:flex;align-items:baseline;gap:12px"><div style="font-family:'Geist Mono',monospace;font-size:12px;color:#A8A29E">01</div><div style="font-size:15px;font-weight:600">Choose a campaign</div></div>
+            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px">
+              <div style="background:#fff;border:1px solid #E7E5E4;border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:8px"><div style="font-family:'Geist Mono',monospace;font-size:10px;font-weight:600;letter-spacing:.06em;color:#78716C;background:#F5F5F4;border-radius:5px;padding:2px 7px;align-self:flex-start">JOB</div><div style="font-size:13.5px;font-weight:600">Job outreach</div><div style="font-size:12px;line-height:1.45;color:#78716C">Reach hiring managers about a role</div></div>
+              <div style="background:#FFF7ED;border:1px solid #EA580C;box-shadow:0 0 0 3px #FFEDD5;border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:8px"><div style="font-family:'Geist Mono',monospace;font-size:10px;font-weight:600;letter-spacing:.06em;color:#C2410C;background:#FFEDD5;border-radius:5px;padding:2px 7px;align-self:flex-start">VC</div><div style="font-size:13.5px;font-weight:600">Fundraising</div><div style="font-size:12px;line-height:1.45;color:#9A3412">Pitch investors at target firms</div></div>
+              <div style="background:#fff;border:1px solid #E7E5E4;border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:8px"><div style="font-family:'Geist Mono',monospace;font-size:10px;font-weight:600;letter-spacing:.06em;color:#78716C;background:#F5F5F4;border-radius:5px;padding:2px 7px;align-self:flex-start">B2B</div><div style="font-size:13.5px;font-weight:600">B2B sales</div><div style="font-size:12px;line-height:1.45;color:#78716C">Email decision-makers your offer</div></div>
+              <div style="background:#fff;border:1px solid #E7E5E4;border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:8px"><div style="font-family:'Geist Mono',monospace;font-size:10px;font-weight:600;letter-spacing:.06em;color:#78716C;background:#F5F5F4;border-radius:5px;padding:2px 7px;align-self:flex-start">PR</div><div style="font-size:13.5px;font-weight:600">PR / media pitch</div><div style="font-size:12px;line-height:1.45;color:#78716C">Pitch a story to the right beat</div></div>
+              <div style="background:#fff;border:1px solid #E7E5E4;border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:8px"><div style="font-family:'Geist Mono',monospace;font-size:10px;font-weight:600;letter-spacing:.06em;color:#78716C;background:#F5F5F4;border-radius:5px;padding:2px 7px;align-self:flex-start">POD</div><div style="font-size:13.5px;font-weight:600">Podcast guesting</div><div style="font-size:12px;line-height:1.45;color:#78716C">Pitch yourself to shows &amp; hosts</div></div>
+              <div style="background:#fff;border:1px solid #E7E5E4;border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:8px"><div style="font-family:'Geist Mono',monospace;font-size:10px;font-weight:600;letter-spacing:.06em;color:#78716C;background:#F5F5F4;border-radius:5px;padding:2px 7px;align-self:flex-start">BD</div><div style="font-size:13.5px;font-weight:600">Partnerships</div><div style="font-size:12px;line-height:1.45;color:#78716C">Propose a collab to BD &amp; execs</div></div>
+              <div style="background:#fff;border:1px solid #E7E5E4;border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:8px"><div style="font-family:'Geist Mono',monospace;font-size:10px;font-weight:600;letter-spacing:.06em;color:#78716C;background:#F5F5F4;border-radius:5px;padding:2px 7px;align-self:flex-start">REC</div><div style="font-size:13.5px;font-weight:600">Recruiting</div><div style="font-size:12px;line-height:1.45;color:#78716C">Reach candidates about your role</div></div>
+            </div>
+          </div>
+          <!-- Step 2 -->
+          <div style="display:flex;flex-direction:column;gap:16px">
+            <div style="display:flex;align-items:baseline;gap:12px"><div style="font-family:'Geist Mono',monospace;font-size:12px;color:#A8A29E">02</div><div style="font-size:15px;font-weight:600">Tell it who to find</div></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+              <div style="display:flex;flex-direction:column;gap:6px"><div style="font-size:13px;font-weight:500;color:#44403C">Your domain <span style="color:#EA580C">*</span></div><div style="background:#fff;border:1px solid #E7E5E4;border-radius:8px;height:40px;display:flex;align-items:center;padding:0 12px;font-size:14px">parcelry.com</div><div style="font-size:12px;color:#A8A29E">Gives the draft context about your startup.</div></div>
+              <div style="display:flex;flex-direction:column;gap:6px"><div style="font-size:13px;font-weight:500;color:#44403C">Location</div><div style="background:#fff;border:1px solid #E7E5E4;border-radius:8px;height:40px;display:flex;align-items:center;padding:0 12px;font-size:14px">San Francisco</div><div style="font-size:12px;color:#A8A29E">Optional — narrows targeting.</div></div>
+            </div>
+            <!-- Discover firms panel -->
+            <div style="background:#fff;border:1px solid #E7E5E4;border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:16px">
+              <div>
+                <div style="font-size:14px;font-weight:600">Discover VC &amp; angel firms</div>
+                <div style="font-size:12.5px;color:#78716C;margin-top:3px">Don't know the domains? Filter the built-in catalog — or search live with Serper.</div>
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:10px;align-items:end">
+                <div style="display:flex;flex-direction:column;gap:5px"><div style="font-size:12px;font-weight:500;color:#57534E">Sector</div><div style="background:#fff;border:1px solid #E7E5E4;border-radius:8px;height:36px;display:flex;align-items:center;padding:0 10px;font-size:13px">ai</div></div>
+                <div style="display:flex;flex-direction:column;gap:5px"><div style="font-size:12px;font-weight:500;color:#57534E">Stage</div><div style="background:#fff;border:1px solid #E7E5E4;border-radius:8px;height:36px;display:flex;align-items:center;justify-content:space-between;padding:0 10px;font-size:13px">Seed<span style="color:#A8A29E;font-size:11px">▾</span></div></div>
+                <div style="display:flex;flex-direction:column;gap:5px"><div style="font-size:12px;font-weight:500;color:#57534E">Location</div><div style="background:#fff;border:1px solid #E7E5E4;border-radius:8px;height:36px;display:flex;align-items:center;padding:0 10px;font-size:13px;color:#A8A29E">US, EU…</div></div>
+                <div style="background:#1C1917;color:#fff;border-radius:8px;height:36px;display:flex;align-items:center;padding:0 16px;font-size:13px;font-weight:500">Find firms</div>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px"><div style="width:30px;height:18px;border-radius:999px;background:#E7E5E4;position:relative"><div style="position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(28,25,23,.2)"></div></div><div style="font-size:12.5px;color:#78716C">Also search live · needs Serper key</div></div>
+              <div style="height:1px;background:#F5F5F4"></div>
+              <div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.08em;color:#A8A29E">8 MATCHES · 6 SELECTED</div>
+              <div style="display:flex;flex-wrap:wrap;gap:8px">
+                <div style="display:flex;align-items:center;gap:8px;border:1px solid #EA580C;background:#FFF7ED;border-radius:999px;padding:7px 12px"><span style="color:#C2410C;font-size:12px;font-weight:600">✓</span><span style="font-size:13px;font-weight:600">First Round</span><span style="font-family:'Geist Mono',monospace;font-size:11px;color:#9A3412">firstround.com</span><span style="font-size:10px;background:#FFEDD5;color:#9A3412;border-radius:4px;padding:1px 6px">seed</span></div>
+                <div style="display:flex;align-items:center;gap:8px;border:1px solid #EA580C;background:#FFF7ED;border-radius:999px;padding:7px 12px"><span style="color:#C2410C;font-size:12px;font-weight:600">✓</span><span style="font-size:13px;font-weight:600">Haystack</span><span style="font-family:'Geist Mono',monospace;font-size:11px;color:#9A3412">haystack.vc</span><span style="font-size:10px;background:#FFEDD5;color:#9A3412;border-radius:4px;padding:1px 6px">seed</span></div>
+                <div style="display:flex;align-items:center;gap:8px;border:1px solid #EA580C;background:#FFF7ED;border-radius:999px;padding:7px 12px"><span style="color:#C2410C;font-size:12px;font-weight:600">✓</span><span style="font-size:13px;font-weight:600">Uncork Capital</span><span style="font-family:'Geist Mono',monospace;font-size:11px;color:#9A3412">uncorkcapital.com</span><span style="font-size:10px;background:#FFEDD5;color:#9A3412;border-radius:4px;padding:1px 6px">seed</span></div>
+                <div style="display:flex;align-items:center;gap:8px;border:1px solid #EA580C;background:#FFF7ED;border-radius:999px;padding:7px 12px"><span style="color:#C2410C;font-size:12px;font-weight:600">✓</span><span style="font-size:13px;font-weight:600">Boldstart</span><span style="font-family:'Geist Mono',monospace;font-size:11px;color:#9A3412">boldstart.vc</span><span style="font-size:10px;background:#FFEDD5;color:#9A3412;border-radius:4px;padding:1px 6px">ai</span></div>
+                <div style="display:flex;align-items:center;gap:8px;border:1px solid #EA580C;background:#FFF7ED;border-radius:999px;padding:7px 12px"><span style="color:#C2410C;font-size:12px;font-weight:600">✓</span><span style="font-size:13px;font-weight:600">Amplify Partners</span><span style="font-family:'Geist Mono',monospace;font-size:11px;color:#9A3412">amplifypartners.com</span><span style="font-size:10px;background:#FFEDD5;color:#9A3412;border-radius:4px;padding:1px 6px">ai</span></div>
+                <div style="display:flex;align-items:center;gap:8px;border:1px solid #EA580C;background:#FFF7ED;border-radius:999px;padding:7px 12px"><span style="color:#C2410C;font-size:12px;font-weight:600">✓</span><span style="font-size:13px;font-weight:600">Air Street Capital</span><span style="font-family:'Geist Mono',monospace;font-size:11px;color:#9A3412">airstreet.com</span><span style="font-size:10px;background:#FFEDD5;color:#9A3412;border-radius:4px;padding:1px 6px">ai</span></div>
+                <div style="display:flex;align-items:center;gap:8px;border:1px solid #E7E5E4;background:#fff;border-radius:999px;padding:7px 12px"><span style="width:12px;height:12px;border:1px solid #D6D3D1;border-radius:50%"></span><span style="font-size:13px;font-weight:600;color:#57534E">Precursor Ventures</span><span style="font-family:'Geist Mono',monospace;font-size:11px;color:#A8A29E">precursorvc.com</span><span style="font-size:10px;background:#F5F5F4;color:#78716C;border-radius:4px;padding:1px 6px">seed</span></div>
+                <div style="display:flex;align-items:center;gap:8px;border:1px solid #E7E5E4;background:#fff;border-radius:999px;padding:7px 12px"><span style="width:12px;height:12px;border:1px solid #D6D3D1;border-radius:50%"></span><span style="font-size:13px;font-weight:600;color:#57534E">Village Global</span><span style="font-family:'Geist Mono',monospace;font-size:11px;color:#A8A29E">villageglobal.vc</span><span style="font-size:10px;background:#F5F5F4;color:#78716C;border-radius:4px;padding:1px 6px">seed</span></div>
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <div style="font-size:13px;font-weight:500;color:#44403C">Target firm domains <span style="color:#EA580C">*</span></div>
+              <div style="background:#fff;border:1px solid #E7E5E4;border-radius:8px;padding:12px 14px;font-family:'Geist Mono',monospace;font-size:12.5px;line-height:1.8;color:#44403C">firstround.com<br>haystack.vc<br>uncorkcapital.com<br>boldstart.vc<br>amplifypartners.com<br>airstreet.com</div>
+              <div style="font-size:12px;color:#A8A29E">Auto-filled from your selection — add or remove domains freely, one per line.</div>
+            </div>
+          </div>
+          <!-- Step 3 -->
+          <div style="display:flex;flex-direction:column;gap:16px">
+            <div style="display:flex;align-items:baseline;gap:12px"><div style="font-family:'Geist Mono',monospace;font-size:12px;color:#A8A29E">03</div><div style="font-size:15px;font-weight:600">Review &amp; run</div></div>
+            <div style="display:grid;grid-template-columns:1fr 1.4fr;gap:24px;align-items:start">
+              <div style="display:flex;flex-direction:column;gap:8px">
+                <div style="display:flex;justify-content:space-between;align-items:baseline"><div style="font-size:13px;font-weight:500;color:#44403C">Max prospects</div><div style="font-family:'Geist Mono',monospace;font-size:13px;font-weight:600;color:#EA580C">10</div></div>
+                <div style="position:relative;height:16px">
+                  <div style="position:absolute;top:6px;left:0;right:0;height:4px;background:#E7E5E4;border-radius:2px"></div>
+                  <div style="position:absolute;top:6px;left:0;width:37%;height:4px;background:#EA580C;border-radius:2px"></div>
+                  <div style="position:absolute;top:1px;left:calc(37% - 7px);width:14px;height:14px;background:#fff;border:2px solid #EA580C;border-radius:50%"></div>
+                </div>
+                <div style="display:flex;justify-content:space-between;font-size:11px;color:#A8A29E"><span>1</span><span>25</span></div>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:8px">
+                <div style="font-size:13px;font-weight:500;color:#44403C">Draft mode</div>
+                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;background:#F5F5F4;border-radius:10px;padding:3px;gap:3px">
+                  <div style="background:#fff;border-radius:8px;box-shadow:0 1px 2px rgba(28,25,23,.08);padding:8px 12px"><div style="font-size:12.5px;font-weight:600">Claude Code CLI</div><div style="font-size:11px;color:#78716C">no API key</div></div>
+                  <div style="border-radius:8px;padding:8px 12px"><div style="font-size:12.5px;font-weight:500;color:#78716C">Claude API</div><div style="font-size:11px;color:#A8A29E">needs key</div></div>
+                  <div style="border-radius:8px;padding:8px 12px"><div style="font-size:12.5px;font-weight:500;color:#78716C">Template</div><div style="font-size:11px;color:#A8A29E">no AI</div></div>
+                </div>
+              </div>
+            </div>
+            <div style="background:#fff;border:1px solid #E7E5E4;border-radius:12px;padding:16px 20px;display:flex;align-items:center;gap:20px">
+              <div style="display:flex;flex-direction:column;gap:6px">
+                <div style="background:#EA580C;color:#fff;border-radius:8px;height:44px;display:flex;align-items:center;justify-content:center;padding:0 28px;font-size:14px;font-weight:600;box-shadow:0 1px 2px rgba(234,88,12,.35)">Preview — dry run</div>
+                <div style="font-size:11.5px;color:#A8A29E;text-align:center">Drafts everything, sends nothing</div>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:6px">
+                <div style="background:#fff;border:1px solid #FECACA;color:#DC2626;border-radius:8px;height:44px;display:flex;align-items:center;justify-content:center;padding:0 22px;font-size:14px;font-weight:600">Send via Gmail</div>
+                <div style="font-size:11.5px;color:#A8A29E;text-align:center">Asks to confirm · throttled 45 s</div>
+              </div>
+              <div style="margin-left:auto;font-size:12.5px;color:#78716C;max-width:280px;line-height:1.5">Runs are idempotent — anyone already contacted is skipped automatically.</div>
+            </div>
+          </div>
+          <!-- Results -->
+          <div style="display:flex;flex-direction:column;gap:16px">
+            <div style="height:1px;background:#E7E5E4"></div>
+            <div style="display:flex;align-items:baseline;justify-content:space-between">
+              <div style="font-size:15px;font-weight:600">Last run</div>
+              <div style="font-family:'Geist Mono',monospace;font-size:12px;color:#A8A29E">today 14:32 · preview · fundraising</div>
+            </div>
+            <div style="background:#fff;border:1px solid #E7E5E4;border-radius:12px;display:grid;grid-template-columns:repeat(5,1fr)">
+              <div style="padding:18px 22px;border-right:1px solid #F5F5F4"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.08em;color:#A8A29E">FOUND</div><div style="font-size:28px;font-weight:600;margin-top:4px">12</div></div>
+              <div style="padding:18px 22px;border-right:1px solid #F5F5F4"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.08em;color:#A8A29E">RENDERED</div><div style="font-size:28px;font-weight:600;margin-top:4px">9</div></div>
+              <div style="padding:18px 22px;border-right:1px solid #F5F5F4"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.08em;color:#A8A29E">SENT</div><div style="font-size:28px;font-weight:600;margin-top:4px;color:#A8A29E">0</div></div>
+              <div style="padding:18px 22px;border-right:1px solid #F5F5F4"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.08em;color:#A8A29E">SKIPPED</div><div style="font-size:28px;font-weight:600;margin-top:4px;color:#78716C">2</div></div>
+              <div style="padding:18px 22px"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.08em;color:#A8A29E">FAILED</div><div style="font-size:28px;font-weight:600;margin-top:4px;color:#DC2626">1</div></div>
+            </div>
+            <!-- Expanded prospect card -->
+            <div style="background:#fff;border:1px solid #E7E5E4;border-radius:12px;overflow:hidden">
+              <div style="padding:16px 20px;display:flex;align-items:center;gap:14px">
+                <div style="flex:1;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap"><div style="font-size:14px;font-weight:600">Sarah Kim</div><div style="font-family:'Geist Mono',monospace;font-size:12.5px;color:#78716C">sarah@firstround.com</div><div style="font-size:13px;color:#78716C">Partner · First Round</div></div>
+                <div style="display:flex;align-items:center;gap:6px;background:#EFF6FF;border:1px solid #BFDBFE;color:#2563EB;border-radius:999px;padding:3px 10px;font-size:11.5px;font-weight:600"><span style="width:6px;height:6px;border-radius:50%;background:#2563EB"></span>previewed</div>
+                <div style="color:#A8A29E;font-size:12px">▴</div>
+              </div>
+              <div style="border-top:1px solid #F5F5F4;padding:20px;display:flex;flex-direction:column;gap:18px">
+                <div style="border-left:2px solid #E7E5E4;padding:2px 0 2px 14px"><div style="font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.08em;color:#A8A29E;margin-bottom:5px">RESEARCH</div><div style="font-size:13px;font-style:italic;color:#78716C;line-height:1.55">Partner at First Round focused on developer tools and early B2B SaaS; previously product at Segment. Writes about founder-led sales.</div></div>
+                <div><div style="font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.08em;color:#A8A29E;margin-bottom:5px">SUBJECT</div><div style="font-size:14px;font-weight:600">Quick intro — parcelry.com</div></div>
+                <div>
+                  <div style="display:flex;justify-content:space-between;margin-bottom:6px"><div style="font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.08em;color:#A8A29E">BODY</div><div style="font-size:11px;color:#A8A29E">click to edit</div></div>
+                  <div style="background:#FAFAF9;border:1px solid #E7E5E4;border-radius:8px;padding:16px 18px;font-size:14px;line-height:1.65;color:#292524">Hi Sarah,<br><br>Your writing on founder-led sales matched what we're living at Parcelry — we make return logistics programmable for DTC brands (think Stripe for reverse shipping). $41k MRR, 3 months in, mostly inbound.<br><br>Given First Round's early B2B focus, would a 20-minute intro call be worth it in the next couple of weeks?<br><br>— Dhruv, parcelry.com</div>
+                </div>
+              </div>
+            </div>
+            <div style="background:#fff;border:1px solid #E7E5E4;border-radius:12px;padding:16px 20px;display:flex;align-items:center;gap:14px"><div style="flex:1;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap"><div style="font-size:14px;font-weight:600">Tom Álvarez</div><div style="font-family:'Geist Mono',monospace;font-size:12.5px;color:#78716C">tom@uncorkcapital.com</div><div style="font-size:13px;color:#78716C">General Partner · Uncork Capital</div></div><div style="display:flex;align-items:center;gap:6px;background:#EFF6FF;border:1px solid #BFDBFE;color:#2563EB;border-radius:999px;padding:3px 10px;font-size:11.5px;font-weight:600"><span style="width:6px;height:6px;border-radius:50%;background:#2563EB"></span>previewed</div><div style="color:#A8A29E;font-size:12px">▾</div></div>
+            <div style="background:#fff;border:1px solid #E7E5E4;border-radius:12px;padding:16px 20px;display:flex;align-items:center;gap:14px"><div style="flex:1;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap"><div style="font-size:14px;font-weight:600">Priya Natarajan</div><div style="font-family:'Geist Mono',monospace;font-size:12.5px;color:#78716C">priya@haystack.vc</div><div style="font-size:13px;color:#78716C">Partner · Haystack</div></div><div style="display:flex;align-items:center;gap:6px;background:#EFF6FF;border:1px solid #BFDBFE;color:#2563EB;border-radius:999px;padding:3px 10px;font-size:11.5px;font-weight:600"><span style="width:6px;height:6px;border-radius:50%;background:#2563EB"></span>previewed</div><div style="color:#A8A29E;font-size:12px">▾</div></div>
+            <div style="background:#fff;border:1px solid #E7E5E4;border-radius:12px;padding:16px 20px;display:flex;align-items:center;gap:14px"><div style="flex:1;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap"><div style="font-size:14px;font-weight:600;color:#78716C">Daniel Roth</div><div style="font-family:'Geist Mono',monospace;font-size:12.5px;color:#A8A29E">daniel@boldstart.vc</div><div style="font-size:13px;color:#A8A29E">Partner · Boldstart · contacted 12 days ago</div></div><div style="display:flex;align-items:center;gap:6px;background:#F5F5F4;border:1px solid #E7E5E4;color:#78716C;border-radius:999px;padding:3px 10px;font-size:11.5px;font-weight:600"><span style="width:6px;height:6px;border-radius:50%;background:#A8A29E"></span>skipped</div><div style="color:#A8A29E;font-size:12px">▾</div></div>
+            <div style="background:#fff;border:1px solid #E7E5E4;border-radius:12px;padding:16px 20px;display:flex;align-items:center;gap:14px"><div style="flex:1;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap"><div style="font-size:14px;font-weight:600">Marc Osei</div><div style="font-family:'Geist Mono',monospace;font-size:12.5px;color:#DC2626">no verified email found</div><div style="font-size:13px;color:#78716C">Principal · Amplify Partners</div></div><div style="display:flex;align-items:center;gap:6px;background:#FEF2F2;border:1px solid #FECACA;color:#DC2626;border-radius:999px;padding:3px 10px;font-size:11.5px;font-weight:600"><span style="width:6px;height:6px;border-radius:50%;background:#DC2626"></span>failed</div><div style="color:#A8A29E;font-size:12px">▾</div></div>
+            <div style="display:flex;align-items:center;gap:12px">
+              <div style="flex:1;border:1px dashed #D6D3D1;border-radius:10px;padding:12px 16px;display:flex;align-items:center;gap:10px;color:#78716C"><span style="font-size:11px">▸</span><span style="font-size:13px;font-weight:500">Run log</span><span style="font-family:'Geist Mono',monospace;font-size:11.5px;color:#A8A29E">38 lines</span></div>
+              <div style="border:1px solid #E7E5E4;background:#fff;border-radius:8px;height:38px;display:flex;align-items:center;padding:0 16px;font-size:13px;font-weight:500;color:#44403C">Download CSV</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= 1c — DIRECTION B: App shell, empty state ================= -->
+  <div id="1c" style="display:flex;flex-direction:column;gap:14px">
+    <div style="display:flex;gap:10px;align-items:baseline">
+      <a href="#1c" style="font-family:'Geist Mono',monospace;font-size:12px;font-weight:600;background:#1C1917;color:#fff;border-radius:6px;padding:3px 9px;text-decoration:none">1c</a>
+      <div style="font-size:14px;font-weight:600">Direction B — App shell, two-pane</div>
+      <div style="font-size:13px;color:#78716C">setup left, results right · needs Next.js + shadcn · shown at first run (empty state)</div>
+    </div>
+    <div style="width:1440px;height:880px;background:#fff;border:1px solid #E7E5E4;border-radius:12px;overflow:hidden;box-shadow:0 24px 48px -24px rgba(28,25,23,.18);display:flex;flex-direction:column">
+      <!-- Top bar -->
+      <div style="height:56px;flex-shrink:0;border-bottom:1px solid #E7E5E4;display:flex;align-items:center;gap:16px;padding:0 24px">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="width:24px;height:18px;border:1.5px solid #1C1917;border-radius:4px;position:relative;overflow:hidden;background:#fff"><div style="position:absolute;width:17px;height:17px;border:1.5px solid #1C1917;transform:rotate(45deg);top:-11px;left:2.2px;background:#fff"></div></div>
+          <div style="font-size:15px;font-weight:600;letter-spacing:-.01em">ColdEmails</div>
+        </div>
+        <div style="margin-left:auto;display:flex;align-items:center;gap:14px">
+          <div style="display:flex;align-items:center;gap:7px;border:1px solid #E7E5E4;border-radius:999px;padding:5px 12px"><span style="width:7px;height:7px;border-radius:50%;background:#16A34A"></span><span style="font-size:12px;font-weight:500;color:#44403C">4/5 configured</span><span style="font-size:11px;color:#A8A29E">· .env</span></div>
+          <div style="font-family:'Geist Mono',monospace;font-size:11.5px;color:#A8A29E">dhruv@parcelry.com</div>
+          <div style="width:34px;height:20px;border-radius:999px;background:#E7E5E4;position:relative"><div style="position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(28,25,23,.2)"></div></div>
+        </div>
+      </div>
+      <div style="flex:1;display:flex;min-height:0">
+        <!-- Setup pane -->
+        <div style="width:470px;flex-shrink:0;border-right:1px solid #E7E5E4;display:flex;flex-direction:column">
+          <div style="flex:1;overflow:hidden;padding:28px 28px 16px;display:flex;flex-direction:column;gap:26px">
+            <div>
+              <div style="font-size:19px;font-weight:600;letter-spacing:-.01em">New campaign</div>
+              <div style="font-size:13px;color:#78716C;margin-top:4px">Pick a type, tell it who to find.</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.1em;color:#A8A29E">CAMPAIGN</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+                <div style="border:1px solid #EA580C;background:#FFF7ED;box-shadow:0 0 0 2px #FFEDD5;border-radius:9px;padding:10px 12px;display:flex;align-items:center;gap:9px"><div style="font-family:'Geist Mono',monospace;font-size:9.5px;font-weight:600;color:#C2410C;background:#FFEDD5;border-radius:4px;padding:2px 6px">JOB</div><div style="font-size:12.5px;font-weight:600">Job outreach</div></div>
+                <div style="border:1px solid #E7E5E4;border-radius:9px;padding:10px 12px;display:flex;align-items:center;gap:9px"><div style="font-family:'Geist Mono',monospace;font-size:9.5px;font-weight:600;color:#78716C;background:#F5F5F4;border-radius:4px;padding:2px 6px">VC</div><div style="font-size:12.5px;font-weight:500;color:#57534E">Fundraising</div></div>
+                <div style="border:1px solid #E7E5E4;border-radius:9px;padding:10px 12px;display:flex;align-items:center;gap:9px"><div style="font-family:'Geist Mono',monospace;font-size:9.5px;font-weight:600;color:#78716C;background:#F5F5F4;border-radius:4px;padding:2px 6px">B2B</div><div style="font-size:12.5px;font-weight:500;color:#57534E">B2B sales</div></div>
+                <div style="border:1px solid #E7E5E4;border-radius:9px;padding:10px 12px;display:flex;align-items:center;gap:9px"><div style="font-family:'Geist Mono',monospace;font-size:9.5px;font-weight:600;color:#78716C;background:#F5F5F4;border-radius:4px;padding:2px 6px">PR</div><div style="font-size:12.5px;font-weight:500;color:#57534E">PR / media</div></div>
+                <div style="border:1px solid #E7E5E4;border-radius:9px;padding:10px 12px;display:flex;align-items:center;gap:9px"><div style="font-family:'Geist Mono',monospace;font-size:9.5px;font-weight:600;color:#78716C;background:#F5F5F4;border-radius:4px;padding:2px 6px">POD</div><div style="font-size:12.5px;font-weight:500;color:#57534E">Podcast</div></div>
+                <div style="border:1px solid #E7E5E4;border-radius:9px;padding:10px 12px;display:flex;align-items:center;gap:9px"><div style="font-family:'Geist Mono',monospace;font-size:9.5px;font-weight:600;color:#78716C;background:#F5F5F4;border-radius:4px;padding:2px 6px">BD</div><div style="font-size:12.5px;font-weight:500;color:#57534E">Partnerships</div></div>
+                <div style="border:1px solid #E7E5E4;border-radius:9px;padding:10px 12px;display:flex;align-items:center;gap:9px"><div style="font-family:'Geist Mono',monospace;font-size:9.5px;font-weight:600;color:#78716C;background:#F5F5F4;border-radius:4px;padding:2px 6px">REC</div><div style="font-size:12.5px;font-weight:500;color:#57534E">Recruiting</div></div>
+              </div>
+              <div style="font-size:12px;color:#A8A29E">Targets senior hiring &amp; HR contacts at the company you name.</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:14px">
+              <div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.1em;color:#A8A29E">WHO TO FIND</div>
+              <div style="display:flex;flex-direction:column;gap:6px"><div style="font-size:13px;font-weight:500;color:#44403C">Company <span style="color:#EA580C">*</span></div><div style="border:1px solid #E7E5E4;border-radius:8px;height:38px;display:flex;align-items:center;padding:0 12px;font-size:13.5px">Stripe</div></div>
+              <div style="display:flex;flex-direction:column;gap:6px"><div style="font-size:13px;font-weight:500;color:#44403C">Role <span style="color:#EA580C">*</span></div><div style="border:1px solid #E7E5E4;border-radius:8px;height:38px;display:flex;align-items:center;padding:0 12px;font-size:13.5px">ML Engineer</div><div style="font-size:11.5px;color:#A8A29E">The role you're interested in — used to personalize each draft.</div></div>
+              <div style="display:flex;flex-direction:column;gap:6px"><div style="font-size:13px;font-weight:500;color:#44403C">Location</div><div style="border:1px solid #E7E5E4;border-radius:8px;height:38px;display:flex;align-items:center;padding:0 12px;font-size:13.5px">Berlin</div></div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr;gap:14px">
+              <div style="display:flex;flex-direction:column;gap:8px">
+                <div style="display:flex;justify-content:space-between;align-items:baseline"><div style="font-size:13px;font-weight:500;color:#44403C">Max prospects</div><div style="font-family:'Geist Mono',monospace;font-size:13px;font-weight:600;color:#EA580C">10</div></div>
+                <div style="position:relative;height:16px"><div style="position:absolute;top:6px;left:0;right:0;height:4px;background:#E7E5E4;border-radius:2px"></div><div style="position:absolute;top:6px;left:0;width:37%;height:4px;background:#EA580C;border-radius:2px"></div><div style="position:absolute;top:1px;left:calc(37% - 7px);width:14px;height:14px;background:#fff;border:2px solid #EA580C;border-radius:50%"></div></div>
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr 1fr;background:#F5F5F4;border-radius:9px;padding:3px;gap:3px">
+                <div style="background:#fff;border-radius:7px;box-shadow:0 1px 2px rgba(28,25,23,.08);padding:7px 10px;text-align:center"><div style="font-size:12px;font-weight:600">Claude CLI</div><div style="font-size:10.5px;color:#78716C">no key</div></div>
+                <div style="border-radius:7px;padding:7px 10px;text-align:center"><div style="font-size:12px;font-weight:500;color:#78716C">Claude API</div><div style="font-size:10.5px;color:#A8A29E">needs key</div></div>
+                <div style="border-radius:7px;padding:7px 10px;text-align:center"><div style="font-size:12px;font-weight:500;color:#78716C">Template</div><div style="font-size:10.5px;color:#A8A29E">no AI</div></div>
+              </div>
+            </div>
+          </div>
+          <div style="flex-shrink:0;border-top:1px solid #E7E5E4;padding:16px 28px 20px;display:flex;flex-direction:column;gap:10px;background:#FAFAF9">
+            <div style="background:#EA580C;color:#fff;border-radius:8px;height:44px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;box-shadow:0 1px 2px rgba(234,88,12,.35)">Preview — dry run</div>
+            <div style="display:flex;align-items:center;justify-content:center;gap:8px"><div style="font-size:12.5px;font-weight:500;color:#DC2626">Send via Gmail</div><div style="font-size:11px;color:#A8A29E">· confirm required</div></div>
+          </div>
+        </div>
+        <!-- Results pane: empty state -->
+        <div style="flex:1;background:#FAFAF9;display:flex;align-items:center;justify-content:center">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:28px;max-width:400px;text-align:center">
+            <div style="width:52px;height:38px;border:2px solid #D6D3D1;border-radius:7px;position:relative;overflow:hidden;background:#fff"><div style="position:absolute;width:37px;height:37px;border:2px solid #D6D3D1;transform:rotate(45deg);top:-24px;left:4.5px;background:#FAFAF9"></div></div>
+            <div>
+              <div style="font-size:19px;font-weight:600;letter-spacing:-.01em">Three steps, no surprises</div>
+              <div style="font-size:13.5px;color:#78716C;margin-top:6px">Nothing is ever sent without a preview and a confirm.</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:18px;text-align:left">
+              <div style="display:flex;gap:14px"><div style="font-family:'Geist Mono',monospace;font-size:12px;font-weight:600;color:#EA580C;padding-top:2px">01</div><div><div style="font-size:13.5px;font-weight:600">Pick a campaign</div><div style="font-size:12.5px;color:#78716C;line-height:1.5;margin-top:2px">Choose who you're reaching and fill in the search criteria.</div></div></div>
+              <div style="display:flex;gap:14px"><div style="font-family:'Geist Mono',monospace;font-size:12px;font-weight:600;color:#EA580C;padding-top:2px">02</div><div><div style="font-size:13.5px;font-weight:600">Preview</div><div style="font-size:12.5px;color:#78716C;line-height:1.5;margin-top:2px">A dry run finds people, researches them, and drafts every email. Nothing is sent.</div></div></div>
+              <div style="display:flex;gap:14px"><div style="font-family:'Geist Mono',monospace;font-size:12px;font-weight:600;color:#EA580C;padding-top:2px">03</div><div><div style="font-size:13.5px;font-weight:600">Send</div><div style="font-size:12.5px;color:#78716C;line-height:1.5;margin-top:2px">Confirm once, then Gmail delivers — throttled, de-duplicated, tracked.</div></div></div>
+            </div>
+            <div style="font-family:'Geist Mono',monospace;font-size:11.5px;color:#A8A29E">results appear here after a run</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= 1d — DIRECTION B dark, with results ================= -->
+  <div id="1d" style="display:flex;flex-direction:column;gap:14px">
+    <div style="display:flex;gap:10px;align-items:baseline">
+      <a href="#1d" style="font-family:'Geist Mono',monospace;font-size:12px;font-weight:600;background:#1C1917;color:#fff;border-radius:6px;padding:3px 9px;text-decoration:none">1d</a>
+      <div style="font-size:14px;font-weight:600">Direction B — dark mode, after send</div>
+      <div style="font-size:13px;color:#78716C">the theme toggle flips to this · results pane populated, jobs campaign</div>
+    </div>
+    <div style="width:1440px;height:880px;background:#0C0A09;border:1px solid #292524;border-radius:12px;overflow:hidden;box-shadow:0 24px 48px -24px rgba(28,25,23,.4);display:flex;flex-direction:column;color:#FAFAF9">
+      <div style="height:56px;flex-shrink:0;border-bottom:1px solid #292524;display:flex;align-items:center;gap:16px;padding:0 24px">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="width:24px;height:18px;border:1.5px solid #FAFAF9;border-radius:4px;position:relative;overflow:hidden;background:#0C0A09"><div style="position:absolute;width:17px;height:17px;border:1.5px solid #FAFAF9;transform:rotate(45deg);top:-11px;left:2.2px;background:#0C0A09"></div></div>
+          <div style="font-size:15px;font-weight:600;letter-spacing:-.01em">ColdEmails</div>
+        </div>
+        <div style="margin-left:auto;display:flex;align-items:center;gap:14px">
+          <div style="display:flex;align-items:center;gap:7px;border:1px solid #292524;border-radius:999px;padding:5px 12px"><span style="width:7px;height:7px;border-radius:50%;background:#4ADE80"></span><span style="font-size:12px;font-weight:500;color:#D6D3D1">4/5 configured</span><span style="font-size:11px;color:#57534E">· .env</span></div>
+          <div style="font-family:'Geist Mono',monospace;font-size:11.5px;color:#57534E">dhruv@parcelry.com</div>
+          <div style="width:34px;height:20px;border-radius:999px;background:#F97316;position:relative"><div style="position:absolute;top:2px;left:16px;width:16px;height:16px;border-radius:50%;background:#fff"></div></div>
+        </div>
+      </div>
+      <div style="flex:1;display:flex;min-height:0">
+        <div style="width:470px;flex-shrink:0;border-right:1px solid #292524;display:flex;flex-direction:column">
+          <div style="flex:1;overflow:hidden;padding:28px 28px 16px;display:flex;flex-direction:column;gap:26px">
+            <div>
+              <div style="font-size:19px;font-weight:600;letter-spacing:-.01em">New campaign</div>
+              <div style="font-size:13px;color:#A8A29E;margin-top:4px">Pick a type, tell it who to find.</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.1em;color:#57534E">CAMPAIGN</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+                <div style="border:1px solid #F97316;background:rgba(249,115,22,.12);border-radius:9px;padding:10px 12px;display:flex;align-items:center;gap:9px"><div style="font-family:'Geist Mono',monospace;font-size:9.5px;font-weight:600;color:#FDBA74;background:rgba(249,115,22,.18);border-radius:4px;padding:2px 6px">JOB</div><div style="font-size:12.5px;font-weight:600">Job outreach</div></div>
+                <div style="border:1px solid #292524;border-radius:9px;padding:10px 12px;display:flex;align-items:center;gap:9px"><div style="font-family:'Geist Mono',monospace;font-size:9.5px;font-weight:600;color:#A8A29E;background:#1C1917;border-radius:4px;padding:2px 6px">VC</div><div style="font-size:12.5px;font-weight:500;color:#A8A29E">Fundraising</div></div>
+                <div style="border:1px solid #292524;border-radius:9px;padding:10px 12px;display:flex;align-items:center;gap:9px"><div style="font-family:'Geist Mono',monospace;font-size:9.5px;font-weight:600;color:#A8A29E;background:#1C1917;border-radius:4px;padding:2px 6px">B2B</div><div style="font-size:12.5px;font-weight:500;color:#A8A29E">B2B sales</div></div>
+                <div style="border:1px solid #292524;border-radius:9px;padding:10px 12px;display:flex;align-items:center;gap:9px"><div style="font-family:'Geist Mono',monospace;font-size:9.5px;font-weight:600;color:#A8A29E;background:#1C1917;border-radius:4px;padding:2px 6px">PR</div><div style="font-size:12.5px;font-weight:500;color:#A8A29E">PR / media</div></div>
+                <div style="border:1px solid #292524;border-radius:9px;padding:10px 12px;display:flex;align-items:center;gap:9px"><div style="font-family:'Geist Mono',monospace;font-size:9.5px;font-weight:600;color:#A8A29E;background:#1C1917;border-radius:4px;padding:2px 6px">POD</div><div style="font-size:12.5px;font-weight:500;color:#A8A29E">Podcast</div></div>
+                <div style="border:1px solid #292524;border-radius:9px;padding:10px 12px;display:flex;align-items:center;gap:9px"><div style="font-family:'Geist Mono',monospace;font-size:9.5px;font-weight:600;color:#A8A29E;background:#1C1917;border-radius:4px;padding:2px 6px">BD</div><div style="font-size:12.5px;font-weight:500;color:#A8A29E">Partnerships</div></div>
+                <div style="border:1px solid #292524;border-radius:9px;padding:10px 12px;display:flex;align-items:center;gap:9px"><div style="font-family:'Geist Mono',monospace;font-size:9.5px;font-weight:600;color:#A8A29E;background:#1C1917;border-radius:4px;padding:2px 6px">REC</div><div style="font-size:12.5px;font-weight:500;color:#A8A29E">Recruiting</div></div>
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:14px">
+              <div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.1em;color:#57534E">WHO TO FIND</div>
+              <div style="display:flex;flex-direction:column;gap:6px"><div style="font-size:13px;font-weight:500;color:#D6D3D1">Company <span style="color:#F97316">*</span></div><div style="border:1px solid #292524;background:#1C1917;border-radius:8px;height:38px;display:flex;align-items:center;padding:0 12px;font-size:13.5px">Stripe</div></div>
+              <div style="display:flex;flex-direction:column;gap:6px"><div style="font-size:13px;font-weight:500;color:#D6D3D1">Role <span style="color:#F97316">*</span></div><div style="border:1px solid #292524;background:#1C1917;border-radius:8px;height:38px;display:flex;align-items:center;padding:0 12px;font-size:13.5px">ML Engineer</div></div>
+              <div style="display:flex;flex-direction:column;gap:6px"><div style="font-size:13px;font-weight:500;color:#D6D3D1">Location</div><div style="border:1px solid #292524;background:#1C1917;border-radius:8px;height:38px;display:flex;align-items:center;padding:0 12px;font-size:13.5px">Berlin</div></div>
+            </div>
+          </div>
+          <div style="flex-shrink:0;border-top:1px solid #292524;padding:16px 28px 20px;display:flex;flex-direction:column;gap:10px;background:#141110">
+            <div style="background:#F97316;color:#1C1917;border-radius:8px;height:44px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600">Preview — dry run</div>
+            <div style="display:flex;align-items:center;justify-content:center;gap:8px"><div style="font-size:12.5px;font-weight:500;color:#F87171">Send via Gmail</div><div style="font-size:11px;color:#57534E">· confirm required</div></div>
+          </div>
+        </div>
+        <div style="flex:1;background:#141110;padding:28px 32px;display:flex;flex-direction:column;gap:14px;overflow:hidden">
+          <div style="display:flex;align-items:baseline;justify-content:space-between">
+            <div style="font-size:15px;font-weight:600">Last run</div>
+            <div style="font-family:'Geist Mono',monospace;font-size:12px;color:#57534E">today 15:04 · send · jobs</div>
+          </div>
+          <div style="background:#1C1917;border:1px solid #292524;border-radius:12px;display:grid;grid-template-columns:repeat(5,1fr)">
+            <div style="padding:16px 20px;border-right:1px solid #292524"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.08em;color:#57534E">FOUND</div><div style="font-size:26px;font-weight:600;margin-top:4px">8</div></div>
+            <div style="padding:16px 20px;border-right:1px solid #292524"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.08em;color:#57534E">RENDERED</div><div style="font-size:26px;font-weight:600;margin-top:4px">8</div></div>
+            <div style="padding:16px 20px;border-right:1px solid #292524"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.08em;color:#57534E">SENT</div><div style="font-size:26px;font-weight:600;margin-top:4px;color:#4ADE80">6</div></div>
+            <div style="padding:16px 20px;border-right:1px solid #292524"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.08em;color:#57534E">SKIPPED</div><div style="font-size:26px;font-weight:600;margin-top:4px;color:#A8A29E">2</div></div>
+            <div style="padding:16px 20px"><div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.08em;color:#57534E">FAILED</div><div style="font-size:26px;font-weight:600;margin-top:4px;color:#57534E">0</div></div>
+          </div>
+          <div style="background:#1C1917;border:1px solid #292524;border-radius:12px;overflow:hidden">
+            <div style="padding:14px 18px;display:flex;align-items:center;gap:14px">
+              <div style="flex:1;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap"><div style="font-size:14px;font-weight:600">Anna Weber</div><div style="font-family:'Geist Mono',monospace;font-size:12.5px;color:#A8A29E">anna.weber@stripe.com</div><div style="font-size:13px;color:#78716C">Recruiting Lead · Stripe</div></div>
+              <div style="display:flex;align-items:center;gap:6px;background:rgba(22,163,74,.15);border:1px solid rgba(74,222,128,.3);color:#4ADE80;border-radius:999px;padding:3px 10px;font-size:11.5px;font-weight:600"><span style="width:6px;height:6px;border-radius:50%;background:#4ADE80"></span>sent</div>
+              <div style="color:#57534E;font-size:12px">▴</div>
+            </div>
+            <div style="border-top:1px solid #292524;padding:18px;display:flex;flex-direction:column;gap:14px">
+              <div><div style="font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.08em;color:#57534E;margin-bottom:5px">SUBJECT</div><div style="font-size:14px;font-weight:600">Interested in ML Engineer opportunities at Stripe</div></div>
+              <div style="background:#141110;border:1px solid #292524;border-radius:8px;padding:14px 16px;font-size:13.5px;line-height:1.65;color:#D6D3D1">Hi Anna,<br><br>I've followed Stripe's ML work on payment risk for a while — the Radar write-ups especially. I'm an ML engineer (5 yrs, fraud + ranking systems) based in Berlin and saw you're growing the team there.<br><br>Would you be open to a short chat about ML Engineer openings?<br><br>Thanks,<br>Dhruv</div>
+              <div style="font-family:'Geist Mono',monospace;font-size:11px;color:#57534E">delivered 15:04:22 · throttle 30 s</div>
+            </div>
+          </div>
+          <div style="background:#1C1917;border:1px solid #292524;border-radius:12px;padding:14px 18px;display:flex;align-items:center;gap:14px"><div style="flex:1;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap"><div style="font-size:14px;font-weight:600">Jonas Meyer</div><div style="font-family:'Geist Mono',monospace;font-size:12.5px;color:#A8A29E">jonas.meyer@stripe.com</div><div style="font-size:13px;color:#78716C">Technical Recruiter · Stripe</div></div><div style="display:flex;align-items:center;gap:6px;background:rgba(22,163,74,.15);border:1px solid rgba(74,222,128,.3);color:#4ADE80;border-radius:999px;padding:3px 10px;font-size:11.5px;font-weight:600"><span style="width:6px;height:6px;border-radius:50%;background:#4ADE80"></span>sent</div><div style="color:#57534E;font-size:12px">▾</div></div>
+          <div style="background:#1C1917;border:1px solid #292524;border-radius:12px;padding:14px 18px;display:flex;align-items:center;gap:14px"><div style="flex:1;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap"><div style="font-size:14px;font-weight:600;color:#A8A29E">Priya Shah</div><div style="font-family:'Geist Mono',monospace;font-size:12.5px;color:#57534E">contacted 12 days ago</div><div style="font-size:13px;color:#57534E">HR Lead · Stripe</div></div><div style="display:flex;align-items:center;gap:6px;background:rgba(120,113,108,.15);border:1px solid #44403C;color:#A8A29E;border-radius:999px;padding:3px 10px;font-size:11.5px;font-weight:600"><span style="width:6px;height:6px;border-radius:50%;background:#78716C"></span>skipped</div><div style="color:#57534E;font-size:12px">▾</div></div>
+          <div style="display:flex;align-items:center;gap:12px;margin-top:auto">
+            <div style="flex:1;border:1px dashed #44403C;border-radius:10px;padding:11px 16px;display:flex;align-items:center;gap:10px;color:#A8A29E"><span style="font-size:11px">▸</span><span style="font-size:13px;font-weight:500">Run log</span><span style="font-family:'Geist Mono',monospace;font-size:11.5px;color:#57534E">51 lines</span></div>
+            <div style="border:1px solid #292524;border-radius:8px;height:38px;display:flex;align-items:center;padding:0 16px;font-size:13px;font-weight:500;color:#D6D3D1">Download CSV</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= 1e — Component states ================= -->
+  <div id="1e" style="display:flex;flex-direction:column;gap:14px">
+    <div style="display:flex;gap:10px;align-items:baseline">
+      <a href="#1e" style="font-family:'Geist Mono',monospace;font-size:12px;font-weight:600;background:#1C1917;color:#fff;border-radius:6px;padding:3px 9px;text-decoration:none">1e</a>
+      <div style="font-size:14px;font-weight:600">Component states</div>
+      <div style="font-size:13px;color:#78716C">buttons · badges · inputs · send-confirm dialog</div>
+    </div>
+    <div style="width:1240px;background:#fff;border:1px solid #E7E5E4;border-radius:12px;box-shadow:0 24px 48px -24px rgba(28,25,23,.18);padding:44px 48px;display:flex;flex-direction:column;gap:40px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:48px">
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.1em;color:#A8A29E">BUTTONS</div>
+          <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+            <div style="background:#EA580C;color:#fff;border-radius:8px;height:40px;display:flex;align-items:center;padding:0 20px;font-size:13.5px;font-weight:600">Preview — dry run</div>
+            <div style="background:#C2410C;color:#fff;border-radius:8px;height:40px;display:flex;align-items:center;padding:0 20px;font-size:13.5px;font-weight:600">hover</div>
+            <div style="background:#FDBA74;color:#fff;border-radius:8px;height:40px;display:flex;align-items:center;padding:0 20px;font-size:13.5px;font-weight:600">disabled</div>
+          </div>
+          <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+            <div style="background:#fff;border:1px solid #FECACA;color:#DC2626;border-radius:8px;height:40px;display:flex;align-items:center;padding:0 20px;font-size:13.5px;font-weight:600">Send via Gmail</div>
+            <div style="background:#FEF2F2;border:1px solid #DC2626;color:#DC2626;border-radius:8px;height:40px;display:flex;align-items:center;padding:0 20px;font-size:13.5px;font-weight:600">hover</div>
+            <div style="background:#DC2626;color:#fff;border-radius:8px;height:40px;display:flex;align-items:center;padding:0 20px;font-size:13.5px;font-weight:600">Send 9 emails — confirm</div>
+          </div>
+          <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+            <div style="background:#1C1917;color:#fff;border-radius:8px;height:36px;display:flex;align-items:center;padding:0 16px;font-size:13px;font-weight:500">Find firms</div>
+            <div style="border:1px solid #E7E5E4;color:#44403C;border-radius:8px;height:36px;display:flex;align-items:center;padding:0 16px;font-size:13px;font-weight:500">Download CSV</div>
+            <div style="color:#78716C;font-size:13px;font-weight:500;text-decoration:underline;text-underline-offset:3px">ghost / link</div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.1em;color:#A8A29E">STATUS BADGES</div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <div style="display:flex;align-items:center;gap:6px;background:#EFF6FF;border:1px solid #BFDBFE;color:#2563EB;border-radius:999px;padding:4px 12px;font-size:12px;font-weight:600"><span style="width:6px;height:6px;border-radius:50%;background:#2563EB"></span>previewed</div>
+            <div style="display:flex;align-items:center;gap:6px;background:#F0FDF4;border:1px solid #BBF7D0;color:#16A34A;border-radius:999px;padding:4px 12px;font-size:12px;font-weight:600"><span style="width:6px;height:6px;border-radius:50%;background:#16A34A"></span>sent</div>
+            <div style="display:flex;align-items:center;gap:6px;background:#FEF2F2;border:1px solid #FECACA;color:#DC2626;border-radius:999px;padding:4px 12px;font-size:12px;font-weight:600"><span style="width:6px;height:6px;border-radius:50%;background:#DC2626"></span>failed</div>
+            <div style="display:flex;align-items:center;gap:6px;background:#F5F5F4;border:1px solid #E7E5E4;color:#78716C;border-radius:999px;padding:4px 12px;font-size:12px;font-weight:600"><span style="width:6px;height:6px;border-radius:50%;background:#A8A29E"></span>skipped</div>
+          </div>
+          <div style="background:#1C1917;border-radius:10px;padding:12px 14px;display:flex;gap:10px;flex-wrap:wrap">
+            <div style="display:flex;align-items:center;gap:6px;background:rgba(37,99,235,.18);border:1px solid rgba(96,165,250,.35);color:#60A5FA;border-radius:999px;padding:4px 12px;font-size:12px;font-weight:600"><span style="width:6px;height:6px;border-radius:50%;background:#60A5FA"></span>previewed</div>
+            <div style="display:flex;align-items:center;gap:6px;background:rgba(22,163,74,.18);border:1px solid rgba(74,222,128,.35);color:#4ADE80;border-radius:999px;padding:4px 12px;font-size:12px;font-weight:600"><span style="width:6px;height:6px;border-radius:50%;background:#4ADE80"></span>sent</div>
+            <div style="display:flex;align-items:center;gap:6px;background:rgba(220,38,38,.18);border:1px solid rgba(248,113,113,.35);color:#F87171;border-radius:999px;padding:4px 12px;font-size:12px;font-weight:600"><span style="width:6px;height:6px;border-radius:50%;background:#F87171"></span>failed</div>
+            <div style="display:flex;align-items:center;gap:6px;background:rgba(120,113,108,.18);border:1px solid #44403C;color:#A8A29E;border-radius:999px;padding:4px 12px;font-size:12px;font-weight:600"><span style="width:6px;height:6px;border-radius:50%;background:#78716C"></span>skipped</div>
+          </div>
+          <div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.1em;color:#A8A29E;margin-top:8px">INPUT STATES</div>
+          <div style="display:flex;gap:12px">
+            <div style="flex:1"><div style="border:1px solid #E7E5E4;border-radius:8px;height:38px;display:flex;align-items:center;padding:0 12px;font-size:13.5px;color:#A8A29E">default</div></div>
+            <div style="flex:1"><div style="border:1px solid #EA580C;box-shadow:0 0 0 3px #FFEDD5;border-radius:8px;height:38px;display:flex;align-items:center;padding:0 12px;font-size:13.5px">focused</div></div>
+            <div style="flex:1"><div style="border:1px solid #DC2626;border-radius:8px;height:38px;display:flex;align-items:center;padding:0 12px;font-size:13.5px">error</div><div style="font-size:11.5px;color:#DC2626;margin-top:4px">Company is required.</div></div>
+          </div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr auto;gap:48px;align-items:start">
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.1em;color:#A8A29E">PROSPECT CARD — COLLAPSED / EXPANDED</div>
+          <div style="background:#fff;border:1px solid #E7E5E4;border-radius:12px;padding:14px 18px;display:flex;align-items:center;gap:14px"><div style="flex:1;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap"><div style="font-size:14px;font-weight:600">Tom Álvarez</div><div style="font-family:'Geist Mono',monospace;font-size:12.5px;color:#78716C">tom@uncorkcapital.com</div><div style="font-size:13px;color:#78716C">General Partner · Uncork</div></div><div style="display:flex;align-items:center;gap:6px;background:#EFF6FF;border:1px solid #BFDBFE;color:#2563EB;border-radius:999px;padding:3px 10px;font-size:11.5px;font-weight:600"><span style="width:6px;height:6px;border-radius:50%;background:#2563EB"></span>previewed</div><div style="color:#A8A29E;font-size:12px">▾</div></div>
+          <div style="background:#fff;border:1px solid #E7E5E4;border-radius:12px;overflow:hidden">
+            <div style="padding:14px 18px;display:flex;align-items:center;gap:14px;background:#FAFAF9"><div style="flex:1;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap"><div style="font-size:14px;font-weight:600">Tom Álvarez</div><div style="font-family:'Geist Mono',monospace;font-size:12.5px;color:#78716C">tom@uncorkcapital.com</div><div style="font-size:13px;color:#78716C">General Partner · Uncork</div></div><div style="display:flex;align-items:center;gap:6px;background:#EFF6FF;border:1px solid #BFDBFE;color:#2563EB;border-radius:999px;padding:3px 10px;font-size:11.5px;font-weight:600"><span style="width:6px;height:6px;border-radius:50%;background:#2563EB"></span>previewed</div><div style="color:#A8A29E;font-size:12px">▴</div></div>
+            <div style="border-top:1px solid #E7E5E4;padding:18px;display:flex;flex-direction:column;gap:14px">
+              <div style="border-left:2px solid #E7E5E4;padding:2px 0 2px 14px"><div style="font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.08em;color:#A8A29E;margin-bottom:5px">RESEARCH</div><div style="font-size:13px;font-style:italic;color:#78716C;line-height:1.55">GP at Uncork; seed-stage SaaS and infra. Frequent notes on pricing for developer products.</div></div>
+              <div><div style="font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.08em;color:#A8A29E;margin-bottom:5px">SUBJECT</div><div style="font-size:14px;font-weight:600">Quick intro — parcelry.com</div></div>
+              <div style="background:#FAFAF9;border:1px solid #E7E5E4;border-radius:8px;padding:14px 16px;font-size:13.5px;line-height:1.6;color:#292524">Hi Tom — your notes on pricing developer products hit home…<span style="color:#A8A29E"> (editable)</span></div>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.1em;color:#A8A29E">SEND CONFIRM DIALOG</div>
+          <div style="width:420px;background:#fff;border:1px solid #E7E5E4;border-radius:14px;box-shadow:0 32px 64px -24px rgba(28,25,23,.3);padding:24px;display:flex;flex-direction:column;gap:18px">
+            <div>
+              <div style="font-size:16px;font-weight:600">Send 9 emails via Gmail?</div>
+              <div style="font-size:13px;color:#78716C;margin-top:4px">This sends real email from your account. It can't be undone.</div>
+            </div>
+            <div style="background:#FAFAF9;border:1px solid #F5F5F4;border-radius:10px;padding:14px 16px;display:flex;flex-direction:column;gap:8px">
+              <div style="display:flex;justify-content:space-between;font-size:12.5px"><span style="color:#78716C">Campaign</span><span style="font-weight:500">Fundraising</span></div>
+              <div style="display:flex;justify-content:space-between;font-size:12.5px"><span style="color:#78716C">Prospects</span><span style="font-weight:500">9 previewed · 2 skipped</span></div>
+              <div style="display:flex;justify-content:space-between;font-size:12.5px"><span style="color:#78716C">Throttle</span><span style="font-weight:500">45 s between sends (~7 min)</span></div>
+              <div style="display:flex;justify-content:space-between;font-size:12.5px"><span style="color:#78716C">From</span><span style="font-family:'Geist Mono',monospace;font-size:12px">dhruv@parcelry.com</span></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px"><div style="width:16px;height:16px;border-radius:4px;background:#EA580C;display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:700">✓</div><div style="font-size:13px;color:#44403C">I previewed these drafts</div></div>
+            <div style="display:flex;gap:10px;justify-content:flex-end">
+              <div style="border:1px solid #E7E5E4;border-radius:8px;height:38px;display:flex;align-items:center;padding:0 16px;font-size:13px;font-weight:500;color:#44403C">Cancel</div>
+              <div style="background:#DC2626;color:#fff;border-radius:8px;height:38px;display:flex;align-items:center;padding:0 18px;font-size:13px;font-weight:600">Send 9 emails</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+</x-dc>
+</body>
+</html>
