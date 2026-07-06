@@ -1,0 +1,2 @@
+[console_scripts]
+coldemails = coldemails.cli:main
