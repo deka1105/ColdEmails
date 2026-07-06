@@ -17,6 +17,17 @@ from string import Template
 
 import streamlit as st
 
+# The redesigned UI relies on st.dialog / st.pills / st.segmented_control /
+# keyed containers. Fail with instructions rather than a mid-page traceback.
+if not hasattr(st, "dialog"):
+    st.error(
+        f"This app needs Streamlit ≥ 1.40 (you have {st.__version__}). "
+        "Run it with the project venv:\n\n"
+        "`.venv/bin/streamlit run app.py`\n\n"
+        "or upgrade: `pip install -U streamlit`"
+    )
+    st.stop()
+
 from coldemails.campaigns import CAMPAIGNS, get_campaign
 from coldemails.engine import Engine
 from coldemails.store import Store
