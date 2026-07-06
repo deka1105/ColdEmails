@@ -28,6 +28,10 @@ def _add_criteria_args(p: argparse.ArgumentParser) -> None:
     p.add_argument("--firms-file", help="file with one firm domain per line")
     p.add_argument("--limit", type=int, default=10)
     p.add_argument(
+        "--attach", action="append", default=[], metavar="FILE",
+        help="attach a file to every email (repeatable, e.g. --attach resume.pdf)",
+    )
+    p.add_argument(
         "--draft",
         choices=["claude_cli", "claude", "template"],
         default="claude_cli",

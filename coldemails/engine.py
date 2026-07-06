@@ -7,6 +7,7 @@ step so runs are idempotent and dedup'd.
 
 from __future__ import annotations
 
+import os
 import time
 from dataclasses import dataclass
 from typing import Callable, Optional
@@ -126,6 +127,7 @@ class Engine:
 
             try:
                 msg = personalizer.render(person, criteria, campaign)
+                msg.attachments = attachments
                 self.store.save_message(key, msg)
                 result.rendered += 1
             except Exception as e:  # personalization failure shouldn't crash the run
