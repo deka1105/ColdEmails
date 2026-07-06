@@ -95,10 +95,9 @@ class GmailSender(Sender):
         return self._service
 
     def send(self, to: str, message: Message) -> None:
-        mime = MIMEText(message.body)
-        mime["To"] = to
-        mime["From"] = f"{self.sender_name} <{self.sender_email}>"
-        mime["Subject"] = message.subject
+        mime = build_mime(
+            f"{self.sender_name} <{self.sender_email}>", to, message
+        )
         raw = base64.urlsafe_b64encode(mime.as_bytes()).decode()
         self._get_service().users().messages().send(
             userId="me", body={"raw": raw}
@@ -112,6 +111,10 @@ class ConsoleSender(Sender):
 
     def send(self, to: str, message: Message) -> None:
         print(f"\n--- (dry-run) to: {to} ---")
-        print(f"Subject: {message.subject}\n")
+        print(f"Subject: {message.subject}")
+        if message.attachments:
+            names = ", ".join(os.path.basename(p) for p in message.attachments)
+            print(f"Attachments: {names}")
+        print()
         print(message.body)
         print("--- end ---")
