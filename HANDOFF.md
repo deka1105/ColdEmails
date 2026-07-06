@@ -16,8 +16,12 @@ with a Streamlit web UI on top.
 - 7 campaigns: `jobs`, `fundraising`, `b2b`, `pr`, `podcast`, `partnerships`,
   `recruiting` (`coldemails/campaigns.py`)
 - CLI: `preview`, `send`, `status`, `campaigns`, `export` (CSV), `discover-firms`
-- Streamlit UI: `app.py` (`streamlit run app.py`, port 8501) — includes CSV
-  download in the status panel
+- Streamlit UI: `app.py` (`streamlit run app.py`, port 8501) — redesigned per
+  `design_handoff_1b_streamlit/` (Direction 1b): scoped CSS with the handoff's
+  design tokens, campaign card grid, `st.pills` firm chips, `st.segmented_control`
+  draft mode, `st.dialog` send-confirm with checkbox gate, status badges, empty
+  state, dark-mode toggle, CSV download. Needs Streamlit ≥1.40 (keyed containers,
+  pills); `.venv` has 1.58.
 - 48 offline tests pass, 1 skipped (`pytest`) — network + LLM stubbed
 - **Verified live** (v1): real Hunter.io lookup + claude_cli drafting, dry-run.
 - New in v1.1:
