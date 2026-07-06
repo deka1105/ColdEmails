@@ -152,6 +152,7 @@ Common options for `preview` / `send`:
 --firms "a,b" --firms-file path.txt      # target firm domains (fundraising)
 --limit N                                # max prospects (default 10)
 --draft {claude_cli,claude,template}     # copy renderer (default claude_cli)
+--attach FILE                            # attach a file to every email (repeatable)
 ```
 
 Examples:
