@@ -545,7 +545,10 @@ def confirm_send_dialog(campaign_name, args, limit, personalizer, throttle, atta
     if c2.button("Send emails", type="primary", disabled=not ok, use_container_width=True):
         try:
             with st.spinner("Sending (throttled)…"):
-                res = run_engine(campaign_name, args, limit, send=True, personalizer=personalizer)
+                res = run_engine(
+                    campaign_name, args, limit, send=True,
+                    personalizer=personalizer, attachments=attachments,
+                )
             st.session_state["last_run"] = (res, "send", campaign_name)
         except Exception as e:
             st.session_state["last_error"] = str(e)
