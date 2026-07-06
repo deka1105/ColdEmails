@@ -162,13 +162,12 @@ div.st-key-firms_panel, div.st-key-action_bar {
   font-family: 'Geist Mono', monospace; font-size: 11px; letter-spacing: 0.08em;
   color: $faint; text-transform: uppercase;
 }
-/* pills (firm chips) */
-[data-testid="stPills"] button {
+/* pills (firm chips) — st.pills renders as a stButtonGroup; scope via panel */
+div.st-key-firms_panel [data-testid="stButtonGroup"] button {
   border-radius: 999px; border: 1px solid $border; background: $surface;
   color: $text_mid2; font-size: 13px; font-weight: 600;
 }
-[data-testid="stPills"] button[aria-checked="true"],
-[data-testid="stPills"] button[kind="pillsActive"] {
+div.st-key-firms_panel [data-testid="stButtonGroup"] button[aria-checked="true"] {
   border-color: $accent; background: $accent_tint; color: $accent_text2;
 }
 
