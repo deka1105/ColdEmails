@@ -64,7 +64,14 @@ CSS = Template("""
 @import url('https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap');
 
 html, body, [class*="st-"], .stApp { font-family: 'Geist', -apple-system, sans-serif; }
+/* Don't override Streamlit's icon font (breaks into raw ligature text). */
+[data-testid="stIconMaterial"], [class*="material-symbols"] {
+  font-family: 'Material Symbols Rounded' !important;
+}
 .stApp { background: $page; color: $text; }
+/* Hide Streamlit chrome (Deploy button, menu, colored header strip). */
+header[data-testid="stHeader"] { background: transparent; }
+[data-testid="stToolbar"], [data-testid="stDecoration"], #MainMenu { display: none; }
 .block-container { max-width: 920px; padding-top: 2.6rem; }
 h1, h2, h3 { letter-spacing: -0.02em; color: $text; }
 hr { border-color: $hairline; }
