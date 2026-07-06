@@ -68,6 +68,24 @@ def test_engine_rejects_missing_attachment(store):
         )
 
 
+def test_cli_test_send(monkeypatch, pdf, capsys):
+    import coldemails.cli as cli
+    from coldemails.gmail import GmailSender
+
+    monkeypatch.setenv("SENDER_EMAIL", "me@example.com")
+    sent = {}
+
+    def fake_send(self, to, msg):
+        sent["to"], sent["msg"] = to, msg
+
+    monkeypatch.setattr(GmailSender, "__init__", lambda self: None)
+    monkeypatch.setattr(GmailSender, "send", fake_send)
+    assert cli.main(["test-send", "--attach", pdf]) == 0
+    assert sent["to"] == "me@example.com"
+    assert sent["msg"].attachments == [pdf]
+    assert "Gmail is configured" in sent["msg"].subject
+
+
 def test_cli_attach_flag_parses(monkeypatch, tmp_path, pdf):
     import coldemails.cli as cli
     from coldemails.engine import RunResult

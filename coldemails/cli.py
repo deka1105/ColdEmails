@@ -180,6 +180,13 @@ def main(argv: list[str] | None = None) -> int:
     p_exp.add_argument("--out", help="output file (default: stdout)")
     p_exp.set_defaults(func=_export)
 
+    p_test = sub.add_parser(
+        "test-send", help="send one test email to yourself to verify Gmail OAuth"
+    )
+    p_test.add_argument("--to", help="recipient (default: SENDER_EMAIL)")
+    p_test.add_argument("--attach", action="append", default=[], metavar="FILE")
+    p_test.set_defaults(func=_test_send)
+
     p_disc = sub.add_parser("discover-firms", help="find VC/angel firm domains")
     p_disc.add_argument("--sector", help="e.g. climate, fintech, ai")
     p_disc.add_argument("--stage", help="e.g. seed, early, growth")
