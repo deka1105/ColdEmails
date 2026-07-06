@@ -1,0 +1,12 @@
+# Theme tokens from design_handoff_1b_streamlit (light palette).
+# The scoped CSS in app.py handles the rest; this colors native widget
+# internals (slider fill, toggle, focus rings) that CSS can't reach reliably.
+[theme]
+base = "light"
+primaryColor = "#EA580C"
+backgroundColor = "#FAFAF9"
+secondaryBackgroundColor = "#FFFFFF"
+textColor = "#1C1917"
+
+[browser]
+gatherUsageStats = false
