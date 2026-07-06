@@ -334,7 +334,14 @@ def credentials_sidebar() -> None:
             + row("Anthropic key", "ANTHROPIC_API_KEY", "optional")
             + row("Serper key", "SERPER_API_KEY", "optional")
             + row("Sender email", "SENDER_EMAIL", "required")
-            + row("Gmail OAuth", "GMAIL_CREDENTIALS_FILE", "required"),
+            # The env var holds a *path* with a default — green only if the
+            # OAuth client secret file actually exists.
+            + row(
+                "Gmail OAuth", "GMAIL_CREDENTIALS_FILE", "required",
+                is_set=os.path.exists(
+                    os.environ.get("GMAIL_CREDENTIALS_FILE", "credentials.json")
+                ),
+            ),
             unsafe_allow_html=True,
         )
         st.markdown(
@@ -677,7 +684,7 @@ def main() -> None:
                 campaign.get("throttle_seconds", 30),
             )
 
-    # --- Results / empty state ---------------------------------------------
+    # --- Results / history / empty state -------------------------------------
     last = st.session_state.get("last_run")
     if last and last[2] == campaign_name:
         (result, logs, rows), verb, _ = last
@@ -687,8 +694,11 @@ def main() -> None:
         show_result(result, logs, rows, f"{stamp} · {verb} · {campaign_name}")
     else:
         with Store(db_path()) as store:
-            has_any = bool(store.counts_by_status(campaign_name))
-        if not has_any:
+            counts = store.counts_by_status(campaign_name)
+            rows = [dict(r) for r in store.list_prospects(campaign_name)]
+        if rows:
+            show_history(counts, rows, campaign_name)
+        else:
             empty_state()
 
 
