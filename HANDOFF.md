@@ -104,6 +104,13 @@ No engine changes needed — that's the core design.
    `/private/tmp/.../scratchpad/venv/bin/python`. The user should make their own
    venv (`python -m venv .venv`); don't hardcode the scratchpad path.
 
+## Backups
+
+`./backup.sh` copies the unrecoverable gitignored state (`.env`, `coldemails.db`,
+Gmail OAuth files once present, + a prospects.csv export) to
+`~/Backups/coldemails/<timestamp>/`, owner-only permissions. First backup taken
+2026-07-06. Re-run after changing keys or real sends.
+
 ## Git
 
 - Clean history target: two commits — `265debf Initial commit` + one squashed
