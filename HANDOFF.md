@@ -73,8 +73,9 @@ No engine changes needed — that's the core design.
 
 ## Secrets / state
 
-- `.env` exists and is **gitignored**. It holds a real `HUNTER_API_KEY`
-  (`dcc020c7...` — user-provided). Do NOT commit `.env`.
+- `.env` exists and is **gitignored**. It holds a real, user-provided
+  `HUNTER_API_KEY`. Do NOT commit `.env`, and do not quote key material
+  (even prefixes) in committed files.
 - No Anthropic key set (not needed with `claude_cli`).
 - Gmail: SENDER_EMAIL/SENDER_NAME set in `.env`, Google client libs installed,
   `coldemails test-send` command ready — **waiting only on the user's
