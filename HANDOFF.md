@@ -105,6 +105,14 @@ No engine changes needed — that's the core design.
    `/private/tmp/.../scratchpad/venv/bin/python`. The user should make their own
    venv (`python -m venv .venv`); don't hardcode the scratchpad path.
 
+## Docs (read in this order on cold start)
+
+1. `CLAUDE.md` — standing orders: commands, don'ts, done-criteria.
+2. This file — state, decisions, environment gotchas.
+3. `docs/BUILD_PLAN.md` — staged remaining roadmap with per-step verification.
+4. `docs/hosting-plan.md` — approved Render-hosting design (Stage 2 detail);
+   header notes it may be superseded by a refined Ultraplan.
+
 ## Backups
 
 `./backup.sh` copies the unrecoverable gitignored state (`.env`, `coldemails.db`,
