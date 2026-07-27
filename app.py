@@ -640,7 +640,7 @@ def main() -> None:
         if field == "domain" and uses_pattern:
             label = "Company domain to target"
             help_txt = "The domain emails are built on, e.g. stripe.com"
-        if field == "role" and campaign_name == "direct":
+        if field == "role" and campaign_name in ("direct", "directory"):
             label = "Why you're reaching out"
             help_txt = "One line — used to steer the draft"
         args[field] = (
