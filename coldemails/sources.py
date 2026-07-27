@@ -149,7 +149,10 @@ def _hunter_domain_search(
 
 def _name_parts(name: str) -> dict[str, str]:
     """Split a full name into the tokens the patterns use. Lowercased, ASCII-ish."""
-    cleaned = re.sub(r"[^a-z\s]", "", (name or "").strip().lower())
+    # Fold accents to ASCII (José -> jose) before dropping non-letters.
+    folded = unicodedata.normalize("NFKD", (name or "").strip().lower())
+    folded = folded.encode("ascii", "ignore").decode("ascii")
+    cleaned = re.sub(r"[^a-z\s]", "", folded)
     bits = [b for b in cleaned.split() if b]
     first = bits[0] if bits else ""
     last = bits[-1] if len(bits) > 1 else ""

@@ -11,7 +11,7 @@ def test_all_campaigns_have_required_shape():
         "jobs", "fundraising", "b2b", "pr", "podcast", "partnerships", "recruiting"
     }
     for name, cfg in CAMPAIGNS.items():
-        assert cfg["source"] in {"hunter", "hunter_firms"}, name
+        assert cfg["source"] in {"hunter", "hunter_firms", "pattern"}, name
         assert cfg["personalizer"], name
         assert cfg["prompt"], name
         assert cfg["fallback_subject"], name
