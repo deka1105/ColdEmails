@@ -772,6 +772,8 @@ def main() -> None:
         miss = [FIELD_LABELS[f] for f in required if not args.get(f)]
         if campaign.get("needs_firms") and not args.get("firms"):
             miss.append("Target firm domains")
+        if uses_pattern and not args.get("names"):
+            miss.append("Prospect names")
         return miss
 
     if err := st.session_state.pop("last_error", None):
