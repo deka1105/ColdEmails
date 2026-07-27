@@ -602,18 +602,72 @@ def main() -> None:
         unsafe_allow_html=True,
     )
     args: dict = {}
-    fields = [f for f in ["company", "role", "domain", "location"] if f in required]
-    fields += [f for f in ["location"] if f not in fields]  # location always shown
+
+    # Keyless prospecting: campaigns whose source is 'pattern' (e.g. Direct
+    # outreach) always use it; single-domain Hunter campaigns can opt in via a
+    # toggle to spend zero Hunter credits, providing names instead.
+    source = campaign["source"]
+    if source == "hunter":
+        use_pattern = st.toggle(
+            "Save Hunter credits — infer emails from names I provide",
+            key=f"pat_{campaign_name}",
+            help="No Hunter lookup. You give the names; each email is guessed from "
+            "the company's domain pattern and MX-checked.",
+        )
+        if use_pattern:
+            args["source"] = "pattern"
+    else:
+        use_pattern = False
+    uses_pattern = source == "pattern" or use_pattern
+
+    # Which criteria fields to show. Pattern flows need a domain and a reason.
+    order = ["company", "role", "domain", "location"]
+    show = {f for f in order if f in required}
+    if uses_pattern:
+        show.add("role")
+        if "company" not in show:
+            show.add("domain")
+    show.add("location")  # location always shown
+    fields = [f for f in order if f in show]
+
     cols = st.columns(2)
     for i, field in enumerate(fields):
         star = " :orange[*]" if field in required else ""
+        label, help_txt = FIELD_LABELS[field], FIELD_HELP[field]
+        if field == "domain" and uses_pattern:
+            label = "Company domain to target"
+            help_txt = "The domain emails are built on, e.g. stripe.com"
+        if field == "role" and campaign_name == "direct":
+            label = "Why you're reaching out"
+            help_txt = "One line — used to steer the draft"
         args[field] = (
             cols[i % 2].text_input(
-                FIELD_LABELS[field] + star, key=f"in_{campaign_name}_{field}",
-                help=FIELD_HELP[field],
+                label + star, key=f"in_{campaign_name}_{field}", help=help_txt,
             )
             or None
         )
+
+    # Names + optional pattern hint for the keyless source.
+    if uses_pattern:
+        names_raw = st.text_area(
+            "Prospect names :orange[*]",
+            placeholder="Jane Doe\nJohn Smith",
+            help="One name per line. Each email is inferred from the domain — no "
+            "Hunter credit. The draft (and dry-run) shows the guess before sending.",
+            key=f"names_{campaign_name}",
+        )
+        args["names"] = [
+            n.strip() for n in names_raw.replace(",", "\n").splitlines() if n.strip()
+        ]
+        pat = st.text_input(
+            "Email pattern (optional)",
+            placeholder="{first}.{last}",
+            help="Know the company's format? Set it for exact guesses. Learn it "
+            "once from a single Hunter lookup, then reuse it here for free.",
+            key=f"patternhint_{campaign_name}",
+        )
+        if pat and pat.strip():
+            args["pattern"] = pat.strip()
 
     # Fundraising-only: discover firms panel + target domains textarea.
     if campaign.get("needs_firms"):
