@@ -7,12 +7,15 @@ it in ``_SOURCES``.
 
 from __future__ import annotations
 
+import csv
+import os
 import re
 import unicodedata
 from abc import ABC, abstractmethod
 
 import requests
 
+from . import company as company_resolver
 from . import emailcheck
 from .config import env
 from .models import Criteria, Person
