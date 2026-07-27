@@ -253,6 +253,7 @@ div.st-key-btn_csv button {
 """)
 
 CAMPAIGN_CARDS = [
+    ("direct", "1:1", "Direct outreach", "Email people you know of — no Hunter credit"),
     ("jobs", "JOB", "Job outreach", "Reach hiring managers about a role"),
     ("fundraising", "VC", "Fundraising", "Pitch investors at target firms"),
     ("b2b", "B2B", "B2B sales", "Email decision-makers your offer"),
