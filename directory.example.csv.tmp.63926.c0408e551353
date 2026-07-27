@@ -1,0 +1,18 @@
+name,domain,company,title,notes,email
+# Your prospect directory. Copy this to directory.csv and fill it with people
+# you found on Google / LinkedIn / Google Scholar. Only `name` plus one of
+# `domain`/`company` is required — the rest is optional.
+#
+# Columns:
+#   name    (required)  Full name, e.g. "Jane Doe"
+#   domain              Company web domain, e.g. stripe.com (best for guessing)
+#   company             Company name — resolved to a domain if `domain` is blank
+#   title               Role, e.g. "Head of Payments"
+#   notes               Public facts to reference in the draft (this is the gold:
+#                       a recent paper, a talk, a launch — from Scholar/LinkedIn)
+#   email               If you already know it, put it here to skip the guess
+#
+# Lines starting with # are ignored. Delete these comment rows in your real file.
+Jane Doe,stripe.com,Stripe,Head of Payments,"Spoke at Money2020 on stablecoin settlement; ex-Square",
+Alan Kim,mit.edu,MIT,Professor of CS,"2026 paper on efficient transformers; leads the ML Systems lab",
+Priya Nair,,Sequoia Capital,Partner,"Backed three dev-tools seed rounds this year; writes about DX",
