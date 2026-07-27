@@ -38,6 +38,11 @@ def _add_criteria_args(p: argparse.ArgumentParser) -> None:
     )
     p.add_argument("--names-file", help="file with one prospect name per line")
     p.add_argument(
+        "--directory",
+        help="path to your prospect-directory CSV for the 'directory' campaign "
+        "(default: directory.csv). See directory.example.csv.",
+    )
+    p.add_argument(
         "--pattern",
         help="email pattern hint for the 'pattern' source, e.g. '{first}.{last}' "
         "(learn it once from a Hunter lookup, then infer the rest free)",
@@ -86,6 +91,7 @@ def _criteria(a: argparse.Namespace) -> dict:
         "source": a.source,
         "names": _names(a),
         "pattern": a.pattern,
+        "directory": a.directory,
     }
 
 
