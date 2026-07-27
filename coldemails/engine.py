@@ -64,6 +64,8 @@ class Engine:
             c.extra["names"] = names
         if args.get("pattern"):
             c.extra["email_pattern"] = args["pattern"]
+        if args.get("directory"):
+            c.extra["directory"] = args["directory"]
 
         missing = [f for f in campaign.get("requires", []) if not getattr(c, f, None)]
         if missing:
@@ -139,8 +141,9 @@ class Engine:
 
             if enricher:
                 person = enricher.enrich(person)
-                if person.background:
-                    self.store.save_background(key, person.background)
+            # Persist any background — from the enricher or a directory's notes.
+            if person.background:
+                self.store.save_background(key, person.background)
 
             try:
                 msg = personalizer.render(person, criteria, campaign)
