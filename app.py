@@ -581,8 +581,8 @@ def main() -> None:
         '<span class="ttl">Choose a campaign</span></div>',
         unsafe_allow_html=True,
     )
-    rows = [CAMPAIGN_CARDS[:4], CAMPAIGN_CARDS[4:]]
-    for row_cards in rows:
+    for start in range(0, len(CAMPAIGN_CARDS), 4):
+        row_cards = CAMPAIGN_CARDS[start:start + 4]
         cols = st.columns(4)
         for col, (key, tag, title, desc) in zip(cols, row_cards):
             with col, st.container(key=f"card_{key}"):
@@ -628,6 +628,8 @@ def main() -> None:
         show.add("role")
         if "company" not in show:
             show.add("domain")
+    if campaign_name == "directory":
+        show.add("role")  # the "why", per row it applies to everyone in the list
     show.add("location")  # location always shown
     fields = [f for f in order if f in show]
 
