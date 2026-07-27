@@ -58,6 +58,13 @@ class Engine:
         if firms:
             c.extra["firm_domains"] = firms
 
+        # The keyless 'pattern' source infers emails from names + domain.
+        names = args.get("names") or []
+        if names:
+            c.extra["names"] = names
+        if args.get("pattern"):
+            c.extra["email_pattern"] = args["pattern"]
+
         missing = [f for f in campaign.get("requires", []) if not getattr(c, f, None)]
         if missing:
             raise ValueError(
