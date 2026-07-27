@@ -264,10 +264,86 @@ class PatternSource(ProspectSource):
         return people[:limit]
 
 
+DIRECTORY_DEFAULT = "directory.csv"
+
+
+def _read_directory(path: str) -> list[dict[str, str]]:
+    """Load a prospect-directory CSV into a list of row dicts (blank rows/# skipped)."""
+    with open(path, newline="", encoding="utf-8") as f:
+        rows = []
+        for row in csv.DictReader(f):
+            name = (row.get("name") or "").strip()
+            if not name or name.startswith("#"):
+                continue  # blank line or a leading-# comment row
+            rows.append({k: (v or "").strip() for k, v in row.items() if k})
+    return rows
+
+
+class DirectorySource(ProspectSource):
+    """Read prospects from your own CSV directory — no Hunter, no API, no scraping.
+
+    You maintain ``directory.csv`` by hand from public info (Google / LinkedIn /
+    Google Scholar). Each row needs a ``name`` plus a ``domain`` or ``company``;
+    ``title``/``notes``/``email`` are optional. For each row the email is taken
+    from the ``email`` column if present, otherwise inferred from name + domain
+    (same patterns as PatternSource), and ``notes`` becomes the person's
+    background so the draft can reference it.
+
+    Path resolution: ``criteria.extra['directory']`` → ``COLDEMAILS_DIRECTORY``
+    env → ``directory.csv`` in the working dir.
+    """
+
+    name = "directory"
+
+    def find(self, criteria: Criteria, limit: int = 10) -> list[Person]:
+        path = (
+            criteria.extra.get("directory")
+            or env("COLDEMAILS_DIRECTORY")
+            or DIRECTORY_DEFAULT
+        )
+        if not os.path.isfile(path):
+            raise ValueError(
+                f"Prospect directory not found: {path}. Copy "
+                "directory.example.csv to directory.csv and fill it in, or pass "
+                "--directory <path>."
+            )
+        rows = _read_directory(path)
+        if not rows:
+            raise ValueError(f"Directory '{path}' has no prospect rows.")
+
+        pattern = criteria.extra.get("email_pattern")
+        people: list[Person] = []
+        for row in rows[:limit]:
+            name = row.get("name", "")
+            domain = row.get("domain", "")
+            comp = row.get("company", "")
+            if not domain and comp:
+                domain = company_resolver.resolve(comp)
+            email = row.get("email") or None
+            if not email and domain:
+                candidates = guess_emails(name, domain, pattern)
+                email = candidates[0] if candidates else None
+                if email and emailcheck.has_mx(domain) is False:
+                    email = None  # dead domain — engine will skip it.
+            people.append(
+                Person(
+                    name=name,
+                    email=email,
+                    title=row.get("title") or None,
+                    company=comp or None,
+                    domain=domain or None,
+                    background=row.get("notes") or None,
+                    raw={"source": "directory", **row},
+                )
+            )
+        return people[:limit]
+
+
 _SOURCES: dict[str, type[ProspectSource]] = {
     "hunter": HunterSource,
     "hunter_firms": HunterFirmsSource,
     "pattern": PatternSource,
+    "directory": DirectorySource,
 }
 
 
