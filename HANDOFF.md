@@ -34,6 +34,13 @@ New in v1.2 — stretch Hunter's free 50-lookup/month cap:
 - 79 offline tests pass (was 48). Live-verified: `direct` preview with claude_cli
   draft to inferred `patrick.collison@stripe.com` (MX-passed), + `--pattern` hint
   and `--source` override, all dry-run.
+- **Streamlit UI wired** (`app.py`): new "Direct outreach" campaign card (uses
+  the pattern source); single-domain Hunter campaigns get a "Save Hunter credits"
+  toggle that reveals a **Prospect names** textarea + optional **Email pattern**
+  hint and sets `args['source']='pattern'`. Form fields adapt (shows domain +
+  "why" for pattern flows) with contextual labels; `missing_fields()` requires
+  names. Verified headless (AppTest: 0 exceptions, end-to-end preview found=2 with
+  correct inferred emails, and the names-required guard) + Playwright screenshot.
 
 Considered and rejected: bolting on github.com/kiryano/Scout (social-scraping +
 SMTP verification). Different volume model (bulk list-building vs. our low-volume
