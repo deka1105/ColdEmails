@@ -101,7 +101,9 @@ class Engine:
             if not os.path.isfile(path):
                 raise ValueError(f"Attachment not found: {path}")
 
-        source = get_source(campaign["source"])
+        # A per-run --source override lets any campaign draw prospects from the
+        # keyless 'pattern' source instead of spending a Hunter credit.
+        source = get_source(args.get("source") or campaign["source"])
         enricher = get_enricher(campaign.get("enrich"))
         personalizer = get_personalizer(personalizer or campaign["personalizer"])
         sender: Sender = GmailSender() if send else ConsoleSender()
