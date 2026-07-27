@@ -75,6 +75,14 @@ class Engine:
                 f"Campaign '{campaign_name}' needs target firm domains. "
                 "Pass --firms \"a16z.com,sequoiacap.com\" or --firms-file <path>."
             )
+        # The 'pattern' source (default for 'direct') needs at least one name.
+        uses_pattern = (args.get("source") or campaign["source"]) == "pattern"
+        if (campaign.get("needs_names") or uses_pattern) and not names:
+            raise ValueError(
+                f"Campaign '{campaign_name}' needs prospect names for the "
+                "'pattern' source. Pass --names \"Jane Doe,John Smith\" or "
+                "--names-file <path>."
+            )
         return c
 
     def run(
