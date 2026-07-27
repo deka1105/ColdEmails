@@ -13,6 +13,27 @@ from __future__ import annotations
 from typing import Any
 
 CAMPAIGNS: dict[str, dict[str, Any]] = {
+    # Use case 0 — direct 1:1 outreach when you already know WHO to email.
+    # Input: domain (or company) + one or more names via --names. Uses the
+    # keyless 'pattern' source, so it costs no Hunter credit. --role carries a
+    # one-line "why I'm reaching out" that steers the draft.
+    "direct": {
+        "source": "pattern",
+        "requires": ["domain"],
+        "needs_names": True,
+        "enrich": None,
+        "personalizer": "claude",
+        "throttle_seconds": 40,
+        "prompt": (
+            "You are helping someone write a short, genuine 1:1 cold email to "
+            "{name} at {company} (domain: {domain}, location: {location}). "
+            "Reason for reaching out: {role}. "
+            "Write a concise (<130 words) email that is specific and human, gets "
+            "to the point in the first line, and ends with one low-pressure ask. "
+            "No buzzwords, no flattery, no exclamation marks."
+        ),
+        "fallback_subject": "Quick note",
+    },
     # Use case A — job outreach.
     # Input: company + role + location. Target hiring/HR contacts on the
     # company domain; light or no background enrichment needed.
