@@ -11,7 +11,35 @@ their emails (Hunter.io), researches background, drafts a personalized email
 One engine + swappable interfaces + per-campaign config. Built as a Python CLI
 with a Streamlit web UI on top.
 
-## Current status: working v1.1 (2026-07-05 enhancement pass)
+## Current status: working v1.2 (2026-07-27 — keyless prospecting)
+
+New in v1.2 — stretch Hunter's free 50-lookup/month cap:
+- **Keyless `pattern` prospect source** (`sources.py:PatternSource`, registered
+  as `pattern`). Given names + a domain it infers emails from ranked corporate
+  patterns (`{first}.{last}`, `{first}`, `{f}{last}`, …) — **no Hunter credit**.
+  `guess_emails(name, domain, pattern=None)` is the reusable core. Accent-folded
+  (José→jose). Optional `--pattern "{first}.{last}"` hint makes the primary guess
+  exact — learn a domain's pattern from ONE Hunter call, then infer the rest free.
+- **`emailcheck.py`** — the *safe* half of an SMTP verifier: syntax regex +
+  MX-record lookup (dnspython, offline-safe → returns `None`/unknown under
+  `COLDEMAILS_NO_NETWORK_RESOLVE`). Deliberately NO SMTP `RCPT TO` probe (see
+  module docstring: unreliable on Gmail/MS + hurts sending reputation). A domain
+  with no MX drops the guess so the engine skips it.
+- **`direct` campaign** — generic 1:1 outreach using the pattern source; needs
+  `--domain` (or `--company`) + `--names`; `--role` carries the "why".
+- **`--source` override** on any campaign — e.g. `--campaign jobs --source pattern
+  --names "…"` runs the good jobs prompt with zero-credit sourcing.
+- CLI: `--names`, `--names-file`, `--pattern`, `--source`. Engine: `args["source"]`
+  override + `needs_names` guard. dnspython added to requirements + `.venv`.
+- 79 offline tests pass (was 48). Live-verified: `direct` preview with claude_cli
+  draft to inferred `patrick.collison@stripe.com` (MX-passed), + `--pattern` hint
+  and `--source` override, all dry-run.
+
+Considered and rejected: bolting on github.com/kiryano/Scout (social-scraping +
+SMTP verification). Different volume model (bulk list-building vs. our low-volume
+1:1) and its SMTP probe risks deliverability. Took only the safe idea (MX check).
+
+## Prior status: working v1.1 (2026-07-05 enhancement pass)
 
 - 7 campaigns: `jobs`, `fundraising`, `b2b`, `pr`, `podcast`, `partnerships`,
   `recruiting` (`coldemails/campaigns.py`)
