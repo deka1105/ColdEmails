@@ -26,6 +26,22 @@ def _add_criteria_args(p: argparse.ArgumentParser) -> None:
     p.add_argument("--domain")
     p.add_argument("--firms", help="comma-separated target firm domains (e.g. fundraising)")
     p.add_argument("--firms-file", help="file with one firm domain per line")
+    p.add_argument(
+        "--source",
+        help="override the campaign's prospect source. Use 'pattern' to infer "
+        "emails from --names + --domain with no Hunter credit.",
+    )
+    p.add_argument(
+        "--names",
+        help="comma-separated prospect names for the 'pattern' source "
+        '(e.g. --names "Jane Doe,John Smith")',
+    )
+    p.add_argument("--names-file", help="file with one prospect name per line")
+    p.add_argument(
+        "--pattern",
+        help="email pattern hint for the 'pattern' source, e.g. '{first}.{last}' "
+        "(learn it once from a Hunter lookup, then infer the rest free)",
+    )
     p.add_argument("--limit", type=int, default=10)
     p.add_argument(
         "--attach", action="append", default=[], metavar="FILE",
