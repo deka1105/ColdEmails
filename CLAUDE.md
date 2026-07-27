@@ -28,9 +28,9 @@ explicit user instruction.
 
 - `coldemails/engine.py` — pipeline orchestration; `campaigns.py` — campaign
   configs (adding a use case = one dict entry, no engine changes);
-  `sources.py` (Hunter + keyless `pattern` source), `emailcheck.py`
-  (syntax + MX validation, no SMTP probe), `enrich.py` (web/search research),
-  `personalize.py`
+  `sources.py` (Hunter + keyless `pattern` + `directory` CSV source),
+  `emailcheck.py` (syntax + MX validation, no SMTP probe), `enrich.py`
+  (web/search research), `personalize.py`
   (claude_cli / claude API / template renderers), `gmail.py` (send + MIME),
   `store.py` (SQLite), `firmfinder.py` (VC catalog), `company.py` (name→domain).
 - `HANDOFF.md` — current state, decisions, environment gotchas. **Read it first.**
