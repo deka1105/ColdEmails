@@ -11,7 +11,36 @@ their emails (Hunter.io), researches background, drafts a personalized email
 One engine + swappable interfaces + per-campaign config. Built as a Python CLI
 with a Streamlit web UI on top.
 
-## Current status: working v1.2 (2026-07-27 — keyless prospecting)
+## Current status: working v1.3 (2026-07-27 — Hunter-free directory)
+
+New in v1.3 — a fully Hunter-free workflow via a self-maintained directory:
+- **`DirectorySource`** (`sources.py`, registered `directory`) reads a CSV you
+  build by hand from public info (Google / LinkedIn / Google Scholar). Columns:
+  `name, domain, company, title, notes, email` (name + domain-or-company required,
+  rest optional). Email = `email` column if present, else inferred via
+  `guess_emails` (same as pattern); `notes` → `Person.background` so drafts
+  reference something specific. No Hunter, no API, no scraping.
+- Path: `criteria.extra['directory']` → `COLDEMAILS_DIRECTORY` → `directory.csv`.
+  `directory.example.csv` is the committed template; real `directory.csv` is
+  **gitignored** (third-party personal data — keep local).
+- **`directory` campaign** — generic prompt using name/title/company/{background}
+  /{role as "why"}. CLI: `--directory <path>`. Engine now persists `background`
+  from the source too (not only from an enricher).
+- **UI**: "From directory" campaign card + CSV file-uploader (falls back to
+  `directory.csv` in the project root); `missing_fields()` requires a resolved
+  file. Card grid now chunks by 4 (9 cards → 4/4/1).
+- 86 offline tests pass. Live-verified: `directory` preview with claude_cli draft
+  to inferred `patrick.collison@stripe.com`, draft referencing the row's notes;
+  UI end-to-end preview via AppTest + Playwright screenshot.
+
+Note: LinkedIn *scraping* was explicitly declined (ToS violation, account-ban +
+litigation risk, contradicts the tool's low-volume 1:1 identity). The directory
+is the compliant substitute: a human records public info; the tool references it.
+Hunter is now optional at runtime — `direct` and `directory` campaigns need no
+`HUNTER_API_KEY`. The sidebar still labels it "required" (accurate only for the
+hunter/hunter_firms campaigns); flip to a per-campaign hint if desired.
+
+## Prior status: working v1.2 (2026-07-27 — keyless prospecting)
 
 New in v1.2 — stretch Hunter's free 50-lookup/month cap:
 - **Keyless `pattern` prospect source** (`sources.py:PatternSource`, registered
