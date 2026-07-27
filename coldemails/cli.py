@@ -66,6 +66,16 @@ def _firms(a: argparse.Namespace) -> list[str]:
     return firms
 
 
+def _names(a: argparse.Namespace) -> list[str]:
+    names: list[str] = []
+    if a.names:
+        names += [n.strip() for n in a.names.split(",") if n.strip()]
+    if a.names_file:
+        with open(a.names_file) as f:
+            names += [line.strip() for line in f if line.strip() and not line.startswith("#")]
+    return names
+
+
 def _criteria(a: argparse.Namespace) -> dict:
     return {
         "company": a.company,
@@ -73,6 +83,9 @@ def _criteria(a: argparse.Namespace) -> dict:
         "location": a.location,
         "domain": a.domain,
         "firms": _firms(a),
+        "source": a.source,
+        "names": _names(a),
+        "pattern": a.pattern,
     }
 
 
