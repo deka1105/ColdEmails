@@ -7,14 +7,31 @@ it in ``_SOURCES``.
 
 from __future__ import annotations
 
+import re
 from abc import ABC, abstractmethod
 
 import requests
 
+from . import emailcheck
 from .config import env
 from .models import Criteria, Person
 
 HUNTER_BASE = "https://api.hunter.io/v2"
+
+# Common corporate email patterns, ranked roughly by real-world frequency.
+# Tokens: {first} {last} {f}=first initial {l}=last initial. Order matters —
+# the first pattern is the primary guess, the rest are alternates for export.
+_PATTERNS = [
+    "{first}.{last}",
+    "{first}",
+    "{f}{last}",
+    "{first}{last}",
+    "{first}_{last}",
+    "{f}.{last}",
+    "{last}",
+    "{last}{f}",
+    "{first}{l}",
+]
 
 
 class ProspectSource(ABC):
