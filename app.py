@@ -672,6 +672,34 @@ def main() -> None:
         if pat and pat.strip():
             args["pattern"] = pat.strip()
 
+    # Directory campaign: a CSV you built from public info (no Hunter, no scraping).
+    if campaign["source"] == "directory":
+        up = st.file_uploader(
+            "Prospect directory (CSV) :orange[*]", type=["csv"],
+            help="Columns: name, domain/company, title, notes, email. See "
+            "directory.example.csv. 'notes' (a talk, a paper, a launch) is pulled "
+            "into each draft.",
+        )
+        if up is not None:
+            import tempfile
+
+            ddir = st.session_state.setdefault(
+                "dir_upload", tempfile.mkdtemp(prefix="coldemails_dir_")
+            )
+            path = os.path.join(ddir, "directory.csv")
+            with open(path, "wb") as f:
+                f.write(up.getbuffer())
+            args["directory"] = path
+            st.caption(f"Using uploaded {up.name}")
+        elif os.path.exists("directory.csv"):
+            args["directory"] = "directory.csv"
+            st.caption("Using directory.csv in the project root")
+        else:
+            st.info(
+                "Upload a CSV, or create directory.csv in the project root "
+                "(copy directory.example.csv)."
+            )
+
     # Fundraising-only: discover firms panel + target domains textarea.
     if campaign.get("needs_firms"):
         with st.container(key="firms_panel"):
