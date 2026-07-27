@@ -34,6 +34,28 @@ CAMPAIGNS: dict[str, dict[str, Any]] = {
         ),
         "fallback_subject": "Quick note",
     },
+    # Use case 0b — outreach from your own CSV directory.
+    # Input: a directory.csv you maintain by hand from public info (Google /
+    # LinkedIn / Google Scholar). No Hunter, no API, no scraping. The 'notes'
+    # column flows into {background} so drafts reference something specific.
+    "directory": {
+        "source": "directory",
+        "requires": [],
+        "enrich": None,
+        "personalizer": "claude",
+        "throttle_seconds": 40,
+        "prompt": (
+            "You are helping someone write a short, genuine 1:1 cold email to "
+            "{name} at {company} (domain: {domain}). Their role: {title}. "
+            "Reason for reaching out: {role}. "
+            "What I know about them (public info): {background}. "
+            "Write a concise (<130 words) email that references something "
+            "specific and true about them, gets to the point in the first line, "
+            "and ends with one low-pressure ask. No buzzwords, no flattery, no "
+            "exclamation marks."
+        ),
+        "fallback_subject": "Quick note",
+    },
     # Use case A — job outreach.
     # Input: company + role + location. Target hiring/HR contacts on the
     # company domain; light or no background enrichment needed.
