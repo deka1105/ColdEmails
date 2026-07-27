@@ -805,6 +805,8 @@ def main() -> None:
             miss.append("Target firm domains")
         if uses_pattern and not args.get("names"):
             miss.append("Prospect names")
+        if campaign["source"] == "directory" and not args.get("directory"):
+            miss.append("Prospect directory CSV")
         return miss
 
     if err := st.session_state.pop("last_error", None):
