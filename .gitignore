@@ -7,6 +7,8 @@ credentials.json
 token.json
 *.db
 .DS_Store
+# Your personal prospect directory (third-party info) — keep it local.
+directory.csv
 
 # Auto-added by watcher
 .tox/
