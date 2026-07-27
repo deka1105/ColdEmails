@@ -8,6 +8,7 @@ it in ``_SOURCES``.
 from __future__ import annotations
 
 import re
+import unicodedata
 from abc import ABC, abstractmethod
 
 import requests
