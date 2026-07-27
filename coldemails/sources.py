@@ -146,9 +146,121 @@ def _hunter_domain_search(
     return people
 
 
+def _name_parts(name: str) -> dict[str, str]:
+    """Split a full name into the tokens the patterns use. Lowercased, ASCII-ish."""
+    cleaned = re.sub(r"[^a-z\s]", "", (name or "").strip().lower())
+    bits = [b for b in cleaned.split() if b]
+    first = bits[0] if bits else ""
+    last = bits[-1] if len(bits) > 1 else ""
+    return {
+        "first": first,
+        "last": last,
+        "f": first[:1],
+        "l": last[:1],
+    }
+
+
+def _render_pattern(pattern: str, parts: dict[str, str]) -> str | None:
+    """Fill a pattern like ``{first}.{last}`` -> ``jane.doe``.
+
+    Returns ``None`` if the pattern needs a token the name doesn't provide
+    (e.g. ``{last}`` for a single-word name), so we never emit ``jane.@dom``.
+    """
+    needed = re.findall(r"\{(\w+)\}", pattern)
+    if any(not parts.get(tok) for tok in needed):
+        return None
+    local = pattern.format_map(parts)
+    # Collapse stray separators from any empty edge cases.
+    local = re.sub(r"[._]{2,}", ".", local).strip("._")
+    return local or None
+
+
+def guess_emails(name: str, domain: str, pattern: str | None = None) -> list[str]:
+    """Candidate emails for ``name`` at ``domain``, best guess first.
+
+    If ``pattern`` (a Hunter-style template such as ``{first}.{last}``) is given,
+    that pattern leads; the standard ranked patterns follow as alternates. This
+    is the cheap path: learn one domain's pattern from a single Hunter call, then
+    infer everyone else there for free.
+    """
+    parts = _name_parts(name)
+    if not parts["first"]:
+        return []
+    ordered: list[str] = []
+    seen: set[str] = set()
+    templates = ([pattern] if pattern else []) + _PATTERNS
+    for tmpl in templates:
+        local = _render_pattern(tmpl, parts)
+        if not local:
+            continue
+        email = f"{local}@{domain}".lower()
+        if email not in seen:
+            seen.add(email)
+            ordered.append(email)
+    return ordered
+
+
+class PatternSource(ProspectSource):
+    """Infer emails from names + a domain — no Hunter credit, no API key.
+
+    Input (via ``criteria.extra``): ``names`` (list of full names) and a resolved
+    ``domain``. Optionally ``email_pattern`` (a ``{first}.{last}``-style hint,
+    e.g. learned from one Hunter lookup) makes the primary guess exact.
+
+    Each returned Person gets the best-guess email plus every alternate candidate
+    in ``raw['email_candidates']`` and a rough confidence in ``raw['confidence']``.
+    A domain with no MX records (when DNS is reachable) drops the guess to no
+    email, so the engine skips it instead of drafting to a dead address.
+    """
+
+    name = "pattern"
+
+    def find(self, criteria: Criteria, limit: int = 10) -> list[Person]:
+        domain = criteria.domain or criteria.extra.get("domain")
+        if not domain:
+            raise ValueError("PatternSource requires a resolved 'domain' in criteria")
+        names = criteria.extra.get("names") or []
+        if not names:
+            raise ValueError(
+                "The 'pattern' source needs prospect names. Pass "
+                '--names "Jane Doe,John Smith" or --names-file <path>.'
+            )
+        pattern = criteria.extra.get("email_pattern")
+        domain_has_mx = emailcheck.has_mx(domain)  # None if unknown/offline
+
+        people: list[Person] = []
+        for raw_name in names[:limit]:
+            name = raw_name.strip()
+            if not name:
+                continue
+            candidates = guess_emails(name, domain, pattern)
+            best = candidates[0] if candidates else None
+            report = emailcheck.validate(best, check_mx=False) if best else {}
+            # Domain-level MX result applies to every guessed address here.
+            if best and domain_has_mx is False:
+                best = None  # dead domain — let the engine skip it.
+            people.append(
+                Person(
+                    name=name,
+                    email=best,
+                    company=criteria.company,
+                    domain=domain,
+                    raw={
+                        "source": "pattern",
+                        "email_candidates": candidates,
+                        "email_pattern": pattern or (_PATTERNS[0] if candidates else None),
+                        "mx": domain_has_mx,
+                        "confidence": 0 if best is None else report.get("confidence", 50),
+                    },
+                )
+            )
+        return people[:limit]
+
+
 _SOURCES: dict[str, type[ProspectSource]] = {
     "hunter": HunterSource,
     "hunter_firms": HunterFirmsSource,
+    "pattern": PatternSource,
 }
 
 
